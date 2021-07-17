@@ -11,23 +11,34 @@ import 'direction_new.dart';
 class OrderDetailsNew extends StatefulWidget {
 
   Accepted accept;
-  String orderDetailsId;
+  String orderid;
+  String lastname;
+  String firstname;
+  Acceptedorders acceptedorders;
+
   @override
-  _OrderDetailState createState() => new _OrderDetailState(item:this.accept,orderDetailsId:this.orderDetailsId);
-  OrderDetailsNew(Accepted accept, orderDetailsId)
+  _OrderDetailState createState() => new _OrderDetailState(item:this.accept,orderid:this.orderid,firstname:this.firstname,lastname: this.lastname,itemorders: this.acceptedorders);
+  OrderDetailsNew(Accepted accept, orderid, String lastname,String firstname, Acceptedorders acceptedorders )
   {
   this.accept=accept;
-  this.orderDetailsId=orderDetailsId;
+  this.orderid=orderid;
+  this.lastname=lastname;
+  this.firstname=firstname;
+  this.acceptedorders=acceptedorders;
   }
 }
 
 class _OrderDetailState extends State<OrderDetailsNew> {
   bool isSwitched = false;
   Accepted item;
-  String orderDetailsId;
+  String orderid;
+  String firstname;
+  String lastname;
+  Acceptedorders itemorders;
   String _value = "";
   String _selectedGender = 'Door closed';
-    _OrderDetailState({this.item,this.orderDetailsId});
+  HomeScreenResponse homeScreenResponse;
+    _OrderDetailState({this.item,this.orderid,this.firstname,this.lastname, this.itemorders});
 
   @override
   void initState() {
@@ -37,7 +48,7 @@ class _OrderDetailState extends State<OrderDetailsNew> {
   Widget appBar(BuildContext context) {
     return AppBar(
       flexibleSpace: Container(
-  color: colorPrimary,),
+      color: colorPrimary,),
         actions: [
           PopupMenuButton(
               color: Colors.white,
@@ -240,7 +251,7 @@ class _OrderDetailState extends State<OrderDetailsNew> {
 
   Widget getAllContentsList(){
     return ListView.builder(
-        itemCount:2,
+        itemCount:5,
         physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         itemBuilder: (BuildContext context, int index) {
@@ -354,7 +365,7 @@ class _OrderDetailState extends State<OrderDetailsNew> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  '${'Order ID : '}${'item.orderid'}',
+                  '${'Order ID : '}${item.orderid}',
                   style: TextStyle(fontWeight: FontWeight.bold),
                   // 'Order Id: ${task.orderId}'
                 ),
@@ -369,7 +380,7 @@ class _OrderDetailState extends State<OrderDetailsNew> {
                     ),
                     Expanded(
                       child: Text(
-                        "10:20am ??",
+                        item.ordertime,
                         // task.createdAt,
                         style: TextStyle(
                             color: colorPrimary, fontWeight: FontWeight.bold),
@@ -384,7 +395,7 @@ class _OrderDetailState extends State<OrderDetailsNew> {
                           padding:
                               const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
                           child: Text(
-                            'item.paymentmod',
+                            item.paymentmod,
                             // task.paymentMethod,
                             style: TextStyle(
                               color: Colors.white,
@@ -398,7 +409,173 @@ class _OrderDetailState extends State<OrderDetailsNew> {
                 SizedBox(
                   height: 15.0,
                 ),
-                orderInfo2(),
+            // acceptedOrders array value started here
+
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                FadeInImage.assetNetwork(
+                  width: 80.0,
+                  height: 60,
+                  fit: BoxFit.fitHeight,
+                  placeholder: 'assets/images/homemade.jpg',
+                  image: 'assets/images/homemade.jpg',
+                  // image: item.image,
+                  // image: order?.packageInfo?.origination?.logo ?? '',
+                ),
+                SizedBox(
+                  width: 10.0,
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(itemorders.shopname
+                        ,
+                        // order?.packageInfo?.origination?.name ?? '',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(itemorders.address,
+                        // "5/23, Al Seeq Apartment, Al Maqtam Street Abudhab",
+                        // order?.packageInfo?.origination?.getAddress() ?? '',
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(child:
+                Column(
+                  children: [
+                    RaisedButton(
+                      padding: const EdgeInsets.all(8.0),
+                      textColor: Colors.white,
+                      color: colorPrimary,
+                      onPressed: () {
+                        String phone =itemorders.contact;
+                        if (phone != null && phone.trim().isNotEmpty) {
+                          phone = 'tel:$phone';
+                          if ( canLaunch(phone) != null) {
+                            launch(phone);
+                          }
+                        }
+
+                        // _launchUrl(
+                        //   // 'tel:${task.order.first?.packageInfo?.location?.phone}');
+                        //     'tel:${'6238839396'}');
+                      },
+                      child:
+                      Container(
+                        width: 80,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            FadeInImage.assetNetwork(
+                              width: 15.0,
+                              height: 15,
+                              fit: BoxFit.fitHeight,
+                              placeholder: 'assets/images/call-icon.png',
+                              image: 'assets/images/call-icon.png',
+                            ),
+                            // Image.asset('assets/images/call-icon.png',height: 15,width: 15,),
+                            Container(
+                              margin: EdgeInsets.only(left: 5),
+                              child: Text(
+                                "Call",
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ),
+
+                          ],
+                        ),
+                      ),
+                    ),
+                    RaisedButton(
+                      padding: const EdgeInsets.all(8.0),
+                      textColor: Colors.white,
+                      color: Color.fromARGB(255, 159, 145, 101),
+                      onPressed: () {
+
+                        String phone ='${'wa.me/'}${itemorders.contact}${'/?text'}=${Uri.parse('Hi')}';
+                        if (phone != null && phone.trim().isNotEmpty) {
+                          phone = 'https:$phone';
+                          if ( canLaunch(phone) != null) {
+                            launch(phone);
+                          }
+                        }
+                      },
+                      child: Container(
+                        width: 80,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            FadeInImage.assetNetwork(
+                              width: 15.0,
+                              height: 15,
+                              fit: BoxFit.fitHeight,
+                              placeholder: 'assets/images/chat_icon.png',
+                              image: 'assets/images/chat-icon.png',
+                              // image: orders.image,
+                              // image: order?.packageInfo?.origination?.logo ?? '',
+                            ),
+                            // Image.asset('assets/images/chat-icon.png',height: 15,width: 15,color: Colors.white,),
+                            Container(
+                              margin: EdgeInsets.only(left: 5),
+                              child: Text(
+                                "Chat",
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    RaisedButton(
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>DirectionNew()));
+
+                        // _launchUrl(
+                        //   // 'http://maps.google.com/?saddr=My+Location&daddr=${task.order.first?.packageInfo?.location?.address}'
+                        //     'http://maps.google.com/?saddr=My+Location&daddr=${'kannur'}');
+                      },
+                      textColor: Colors.white,
+                      color: Color.fromARGB(255, 27, 40, 19),
+                      padding: const EdgeInsets.all(8.0),
+                      child:Container(
+                        width: 80,
+                        child: Row(
+                          children: [
+                            FadeInImage.assetNetwork(
+                              width: 15,
+                              height: 15,
+                              fit: BoxFit.fitHeight,
+                              placeholder: 'assets/images/location-icon.png',
+                              image: 'assets/images/location-icon.png',
+                              // image: orders.image,
+                              // image: order?.packageInfo?.origination?.logo ?? '',
+                            ),
+                            // Image.asset('assets/images/location-icon.png',height: 15,width: 15,color: Colors.white,),
+                            Container(
+                              margin: EdgeInsets.only(left: 5),
+                              child: Text(
+                                "Location",
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                ),
+              ],
+            ),
                 SizedBox(
                   height: 10.0,
                 ),
@@ -421,7 +598,7 @@ class _OrderDetailState extends State<OrderDetailsNew> {
         children: [
           Container(
             // margin: EdgeInsets.only(top: 15),
-            child: Text("Hi, Hameed Irshan",
+            child: Text('${'Hi , '}${firstname}${" "}${lastname}',
                 style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
@@ -448,148 +625,178 @@ class _OrderDetailState extends State<OrderDetailsNew> {
     );
   }
 
-  Widget orderInfo2() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        FadeInImage.assetNetwork(
-          width: 80.0,
-          height: 60,
-          fit: BoxFit.fitHeight,
-          placeholder: 'assets/images/homemade.jpg',
-          image: 'assets/images/homemade.jpg',
-          // image: item.image,
-          // image: order?.packageInfo?.origination?.logo ?? '',
-        ),
-        SizedBox(
-          width: 10.0,
-        ),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-               ' item.product',
-                // order?.packageInfo?.origination?.name ?? '',
-                style: TextStyle(
-                  fontSize: 16.0,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text('item.description',
-                // "5/23, Al Seeq Apartment, Al Maqtam Street Abudhab",
-                // order?.packageInfo?.origination?.getAddress() ?? '',
-                style: TextStyle(
-                  color: Colors.black,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Expanded(child:
-        Column(
-          children: [
-            RaisedButton(
-              padding: const EdgeInsets.all(8.0),
-              textColor: Colors.white,
-              color: colorPrimary,
-              onPressed: () {
-                String phone ="6238839396";
-                if (phone != null && phone.trim().isNotEmpty) {
-                  phone = 'tel:$phone';
-                  if ( canLaunch(phone) != null) {
-                 launch(phone);
-                }
-              }
-
-                // _launchUrl(
-                //   // 'tel:${task.order.first?.packageInfo?.location?.phone}');
-                //     'tel:${'6238839396'}');
-              },
-              child:
-              Container(
-                width: 80,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset('assets/images/call-icon.png',height: 15,width: 15,),
-                    Container(
-                      margin: EdgeInsets.only(left: 5),
-                      child: Text(
-                        "Call",
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ),
-
-                  ],
-                ),
-              ),
-            ),
-            RaisedButton(
-              padding: const EdgeInsets.all(8.0),
-              textColor: Colors.white,
-              color: Color.fromARGB(255, 159, 145, 101),
-              onPressed: () {
-
-                String phone ="wa.me/+916238839396/?text=${Uri.parse('Hi')}";
-                if (phone != null && phone.trim().isNotEmpty) {
-                  phone = 'https:$phone';
-                  if ( canLaunch(phone) != null) {
-                    launch(phone);
-                  }
-                }
-              },
-              child: Container(
-                width: 80,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset('assets/images/chat-icon.png',height: 15,width: 15,color: Colors.white,),
-                    Container(
-                      margin: EdgeInsets.only(left: 5),
-                      child: Text(
-                        "Chat",
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            RaisedButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>DirectionNew()));
-
-                // _launchUrl(
-                //   // 'http://maps.google.com/?saddr=My+Location&daddr=${task.order.first?.packageInfo?.location?.address}'
-                //     'http://maps.google.com/?saddr=My+Location&daddr=${'kannur'}');
-              },
-              textColor: Colors.white,
-              color: Color.fromARGB(255, 27, 40, 19),
-              padding: const EdgeInsets.all(8.0),
-              child:Container(
-                width: 80,
-                child: Row(
-                  children: [
-                    Image.asset('assets/images/location-icon.png',height: 15,width: 15,color: Colors.white,),
-                    Container(
-                      margin: EdgeInsets.only(left: 5),
-                      child: Text(
-                        "Location",
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-        ),
-      ],
-    );
-  }
+  // Widget orderInfo2(Acceptedorders accept) {
+  //   // Acceptedorders acceptedorders =
+  //   // accept. != null && accept.acceptedorders.length > 0
+  //   //     ? accept.acceptedorders[0]
+  //   //     : null;
+  //   return
+  //     Row(
+  //     crossAxisAlignment: CrossAxisAlignment.center,
+  //     children: <Widget>[
+  //       FadeInImage.assetNetwork(
+  //         width: 80.0,
+  //         height: 60,
+  //         fit: BoxFit.fitHeight,
+  //         placeholder: 'assets/images/homemade.jpg',
+  //         image: 'assets/images/homemade.jpg',
+  //         // image: item.image,
+  //         // image: order?.packageInfo?.origination?.logo ?? '',
+  //       ),
+  //       SizedBox(
+  //         width: 10.0,
+  //       ),
+  //       Expanded(
+  //         child: Column(
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: <Widget>[
+  //             Text(acceptedorders.shopname
+  //              ,
+  //               // order?.packageInfo?.origination?.name ?? '',
+  //               style: TextStyle(
+  //                 fontSize: 16.0,
+  //                 color: Colors.black,
+  //                 fontWeight: FontWeight.bold,
+  //               ),
+  //             ),
+  //             Text(acceptedorders.address,
+  //               // "5/23, Al Seeq Apartment, Al Maqtam Street Abudhab",
+  //               // order?.packageInfo?.origination?.getAddress() ?? '',
+  //               style: TextStyle(
+  //                 color: Colors.black,
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //       Expanded(child:
+  //       Column(
+  //         children: [
+  //           RaisedButton(
+  //             padding: const EdgeInsets.all(8.0),
+  //             textColor: Colors.white,
+  //             color: colorPrimary,
+  //             onPressed: () {
+  //               String phone ="6238839396";
+  //               if (phone != null && phone.trim().isNotEmpty) {
+  //                 phone = 'tel:$phone';
+  //                 if ( canLaunch(phone) != null) {
+  //                launch(phone);
+  //               }
+  //             }
+  //
+  //               // _launchUrl(
+  //               //   // 'tel:${task.order.first?.packageInfo?.location?.phone}');
+  //               //     'tel:${'6238839396'}');
+  //             },
+  //             child:
+  //             Container(
+  //               width: 80,
+  //               child: Row(
+  //                 mainAxisAlignment: MainAxisAlignment.center,
+  //                 children: [
+  //                   FadeInImage.assetNetwork(
+  //                     width: 15.0,
+  //                     height: 15,
+  //                     fit: BoxFit.fitHeight,
+  //                     placeholder: 'assets/images/call-icon.png',
+  //                     image: 'assets/images/call-icon.png',
+  //                   ),
+  //                   // Image.asset('assets/images/call-icon.png',height: 15,width: 15,),
+  //                   Container(
+  //                     margin: EdgeInsets.only(left: 5),
+  //                     child: Text(
+  //                       "Call",
+  //                       style: TextStyle(fontSize: 12),
+  //                     ),
+  //                   ),
+  //
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //           RaisedButton(
+  //             padding: const EdgeInsets.all(8.0),
+  //             textColor: Colors.white,
+  //             color: Color.fromARGB(255, 159, 145, 101),
+  //             onPressed: () {
+  //
+  //               String phone ="wa.me/+916238839396/?text=${Uri.parse('Hi')}";
+  //               if (phone != null && phone.trim().isNotEmpty) {
+  //                 phone = 'https:$phone';
+  //                 if ( canLaunch(phone) != null) {
+  //                   launch(phone);
+  //                 }
+  //               }
+  //             },
+  //             child: Container(
+  //               width: 80,
+  //               child: Row(
+  //                 mainAxisAlignment: MainAxisAlignment.center,
+  //                 children: [
+  //                   FadeInImage.assetNetwork(
+  //                     width: 15.0,
+  //                     height: 15,
+  //                     fit: BoxFit.fitHeight,
+  //                     placeholder: 'assets/images/chat_icon.png',
+  //                     image: 'assets/images/chat-icon.png',
+  //                     // image: orders.image,
+  //                     // image: order?.packageInfo?.origination?.logo ?? '',
+  //                   ),
+  //                   // Image.asset('assets/images/chat-icon.png',height: 15,width: 15,color: Colors.white,),
+  //                   Container(
+  //                     margin: EdgeInsets.only(left: 5),
+  //                     child: Text(
+  //                       "Chat",
+  //                       style: TextStyle(fontSize: 12),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //           RaisedButton(
+  //             onPressed: () {
+  //               Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>DirectionNew()));
+  //
+  //               // _launchUrl(
+  //               //   // 'http://maps.google.com/?saddr=My+Location&daddr=${task.order.first?.packageInfo?.location?.address}'
+  //               //     'http://maps.google.com/?saddr=My+Location&daddr=${'kannur'}');
+  //             },
+  //             textColor: Colors.white,
+  //             color: Color.fromARGB(255, 27, 40, 19),
+  //             padding: const EdgeInsets.all(8.0),
+  //             child:Container(
+  //               width: 80,
+  //               child: Row(
+  //                 children: [
+  //                   FadeInImage.assetNetwork(
+  //                     width: 15,
+  //                     height: 15,
+  //                     fit: BoxFit.fitHeight,
+  //                     placeholder: 'assets/images/location-icon.png',
+  //                     image: 'assets/images/location-icon.png',
+  //                     // image: orders.image,
+  //                     // image: order?.packageInfo?.origination?.logo ?? '',
+  //                   ),
+  //                   // Image.asset('assets/images/location-icon.png',height: 15,width: 15,color: Colors.white,),
+  //                   Container(
+  //                     margin: EdgeInsets.only(left: 5),
+  //                     child: Text(
+  //                       "Location",
+  //                       style: TextStyle(fontSize: 12),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget _getDeliveryInfo() {
     // DeliveryAddress deliveryAddress=history.address!=null&&history.address.length>0?history.address[0]:null;

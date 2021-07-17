@@ -200,7 +200,7 @@ Widget getContent(){
                   child: Padding(
                     padding: EdgeInsets.only(top: 25,bottom: 25),
                     child: Center(
-                      child: Text(item.status,style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
+                      child: Text(item.orderstatus,style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
                     ),
                   ),
                 ),
@@ -210,7 +210,7 @@ Widget getContent(){
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text('Status : ', style: TextStyle(color: Colors.black,fontSize: 12),),
-                      Text(item.status, style: TextStyle(color: colorPrimary,fontSize: 15),),
+                      Text(item.orderstatus, style: TextStyle(color: colorPrimary,fontSize: 15),),
                     ],
                   ),
                 ),
@@ -240,7 +240,7 @@ Widget getContent(){
                       Container(
                           width: MediaQuery.of(context).size.width-60,
                           margin: EdgeInsets.only(left: 10),
-                          child: Text('Checked and verified all the items and none of the otems are expired or perished',style: TextStyle(color: Colors.grey,fontSize: 12),))//
+                          child: Text('Checked and verified all the items and none of the items are expired or perished',style: TextStyle(color: Colors.grey,fontSize: 12),))//
                     ],
                   ),
                 ),

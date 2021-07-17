@@ -10,20 +10,20 @@ import '../network/response/HomeScreenResponse.dart';
 import 'balance_screen_new.dart';
 import 'home_screen2.dart';
 class ReportReAssignNew extends StatefulWidget {
-  Orders orders;
+  Ordersnew ordersNew;
   String orderDetailsId;
   @override
-  _ReportReAssignNewState createState() => new _ReportReAssignNewState(item: this.orders,orderDetailsId: this.orderDetailsId,);
-  ReportReAssignNew(Orders orders,orderDetailsId)
+  _ReportReAssignNewState createState() => new _ReportReAssignNewState(item: this.ordersNew,orderDetailsId: this.orderDetailsId,);
+  ReportReAssignNew(Ordersnew ordersNew,orderDetailsId)
   {
-    this.orders=orders;
+    this.ordersNew=ordersNew;
     this.orderDetailsId=orderDetailsId;
   }
 }
 
 class _ReportReAssignNewState extends State<ReportReAssignNew> {
 String _value = " ";
-Orders item;
+Ordersnew item;
 String orderDetailsId;
 final GlobalKey<FormState> reportKey = GlobalKey();
 _ReportReAssignNewState({this.item,this.orderDetailsId});
