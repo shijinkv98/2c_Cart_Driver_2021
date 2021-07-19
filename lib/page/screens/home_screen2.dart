@@ -718,12 +718,7 @@ class _HomeScreenState extends State<HomeScreenNew> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (BuildContext context) =>
-                                              OrderDetailsNew(
-                                                  accept,
-                                                  homeScreenResponse.accepted[index].orderid,
-                                                  homeScreenResponse.lastname,
-                                                  homeScreenResponse.firstname,
-                                                  homeScreenResponse.accepted[index].acceptedorders
+                                              OrderDetailsNew(accept: accept,orderid: accept.orderid,firstname: homeScreenResponse.firstname,lastname: homeScreenResponse.lastname,acceptedorders: accept.acceptedorders,deliaddressacc: accept.deliaddressacc
                                               )));
 
                                 },

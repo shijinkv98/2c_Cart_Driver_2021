@@ -1,30 +1,37 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:projectname33/page/helper/apiparams.dart';
 import 'package:projectname33/page/helper/constants.dart';
 import 'package:projectname33/page/network/response/HomeScreenResponse.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'balance_screen_new.dart';
-class DirectionNew extends StatefulWidget {
+class DirectionNewCustomer extends StatefulWidget {
   List<Acceptedorders> acceptedorders;
-  String address;
   String longitude;
   String latitude;
-  String shopname;
+  String name;
+  String streetname;
+  String road_name;
+  String state;
+  String house;
   @override
-  _DirectionNewState createState() => new _DirectionNewState(latitude:this.latitude,longitude:this.longitude,shopname:this.shopname,address:this.address);
-  DirectionNew({this.address, this.shopname, this.longitude, this.latitude});
+  _DirectionNewCustomerState createState() => new _DirectionNewCustomerState(latitude:this.latitude,longitude:this.longitude,name:this.name,streetname:this.streetname,state: this.state,road_name: this.road_name,house:this.house);
+  DirectionNewCustomer({this.longitude, this.latitude, this.name, this.streetname,this.state,this.road_name,this.house});
 }
 
-class _DirectionNewState extends State<DirectionNew> {
+class _DirectionNewCustomerState extends State<DirectionNewCustomer> {
   List<Acceptedorders> itemordersNew;
    String _value = "";
-  String address;
   String longitude;
   String latitude;
-  String shopname;
+  String name;
+  String streetname;
+  String road_name;
+  String state;
+  String house;
 
-  _DirectionNewState({this.latitude,this.longitude,this.shopname,this.address});
+  _DirectionNewCustomerState({this.latitude,this.longitude,this.state,this.road_name,this.name,this.streetname,this.house});
 
   @override
   void initState() {
@@ -161,10 +168,10 @@ Widget getContent(){
                     children: [
                       Container(
                           width: MediaQuery.of(context).size.width,
-                          child: Text(shopname,style: TextStyle(color: Colors.grey,fontSize: 15,fontWeight: FontWeight.bold),)),
+                          child: Text(name,style: TextStyle(color: Colors.grey,fontSize: 15,fontWeight: FontWeight.bold),)),
                       Container(
                           width: MediaQuery.of(context).size.width,
-                          child: Text(address,style: TextStyle(fontWeight: FontWeight.bold,color: Colors.grey,fontSize: 15),)),
+                          child: Text('${house}${" , "}${streetname}${" , "}${road_name}${" , "}${state}',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.grey,fontSize: 15),)),
                     ],
                   ),
                 )
@@ -178,7 +185,7 @@ Widget getContent(){
               onTap: (){
                 _launchUrl(
                   // 'http://maps.google.com/?saddr=My+Location&daddr=${task.order.first?.packageInfo?.origination?.address}');
-                    'http://maps.google.com/?saddr=My+Location&daddr=${address}');
+                    'http://maps.google.com/?saddr=My+Location&daddr=${streetname}');
               },
               child: Container(
                 width: MediaQuery.of(context).size.width,

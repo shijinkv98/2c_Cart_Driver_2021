@@ -400,12 +400,12 @@ class Acceptedorders {
         this.itemcountshopacc});
 
   Acceptedorders.fromJson(Map<String, dynamic> json) {
-    shopid = json['shopid'];
-    shopname = json['shopname'];
-    contact = json['contact'];
-    latitude = json['latitude'];
-    longitude = json['longitude'];
-    address = json['address'];
+    shopid = json['shopid'].toString();
+    shopname = json['shopname'].toString();
+    contact = json['contact'].toString();
+    latitude = json['latitude'].toString();
+    longitude = json['longitude'].toString();
+    address = json['address'].toString();
     // shopimage = json['shopimage'];
     if (json['accproducts'] != null) {
       accproducts = new List<Accproducts>();

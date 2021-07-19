@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:projectname33/page/custom/custom_switch.dart';
 import 'package:projectname33/page/helper/constants.dart';
 import 'package:projectname33/page/network/response/HomeScreenResponse.dart';
+import 'package:projectname33/page/screens/direction_new_customer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io' show Platform;
 
@@ -14,18 +15,13 @@ class OrderDetailsNew extends StatefulWidget {
   String orderid;
   String lastname;
   String firstname;
-  Acceptedorders acceptedorders;
+  List<Acceptedorders> acceptedorders;
+  List<Accproducts> accproducts;
+  List<Deliaddressacc> deliaddressacc;
 
   @override
-  _OrderDetailState createState() => new _OrderDetailState(item:this.accept,orderid:this.orderid,firstname:this.firstname,lastname: this.lastname,itemorders: this.acceptedorders);
-  OrderDetailsNew(Accepted accept, orderid, String lastname,String firstname, Acceptedorders acceptedorders )
-  {
-  this.accept=accept;
-  this.orderid=orderid;
-  this.lastname=lastname;
-  this.firstname=firstname;
-  this.acceptedorders=acceptedorders;
-  }
+  _OrderDetailState createState() => new _OrderDetailState(item:this.accept,orderid:this.orderid,firstname:this.firstname,lastname: this.lastname,itemorders: this.acceptedorders,accproducts:this.accproducts,deliaddressacc: this.deliaddressacc);
+  OrderDetailsNew({this.accept,this.orderid,this.firstname,this.lastname, this.acceptedorders,this.accproducts,this.deliaddressacc});
 }
 
 class _OrderDetailState extends State<OrderDetailsNew> {
@@ -34,11 +30,13 @@ class _OrderDetailState extends State<OrderDetailsNew> {
   String orderid;
   String firstname;
   String lastname;
-  Acceptedorders itemorders;
+  List<Acceptedorders> itemorders;
+  List<Accproducts> accproducts;
+  List<Deliaddressacc> deliaddressacc;
   String _value = "";
   String _selectedGender = 'Door closed';
   HomeScreenResponse homeScreenResponse;
-    _OrderDetailState({this.item,this.orderid,this.firstname,this.lastname, this.itemorders});
+    _OrderDetailState({this.item,this.orderid,this.firstname,this.lastname, this.itemorders,this.accproducts,this.deliaddressacc});
 
   @override
   void initState() {
@@ -166,7 +164,7 @@ class _OrderDetailState extends State<OrderDetailsNew> {
           SliverToBoxAdapter(child:  _getPadding()),
           SliverToBoxAdapter(child:   getAllContentsList()),
           SliverToBoxAdapter(child:  _getPadding()),
-          SliverToBoxAdapter(child:  _getDeliveryInfo()),
+          SliverToBoxAdapter(child:   getDeliveryAddress()),
         ],
       ),
     );
@@ -190,13 +188,13 @@ class _OrderDetailState extends State<OrderDetailsNew> {
     }
   }
 
-  Widget getMainBody(){
+  Widget getMainBody(Acceptedorders itemorder){
     return Column(
       children: [
-        _getContent(),
+        _getContent(itemorder),
         _productsTitle(),
-         getProductList(),
-        _totalProductsText(),
+         getProductList(itemorder),
+        _totalProductsText(itemorder),
         _getPadding()
 
       ],
@@ -248,27 +246,28 @@ class _OrderDetailState extends State<OrderDetailsNew> {
       ),
     );
   }
-
   Widget getAllContentsList(){
     return ListView.builder(
-        itemCount:5,
+        itemCount:itemorders.length,
         physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         itemBuilder: (BuildContext context, int index) {
-          return getMainBody();
-        });
-  }
-  Widget getProductList(){
-    return ListView.builder(
-        itemCount: 2,
-        physics: NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        itemBuilder: (BuildContext context, int index) {
-          return _products();
+          return getMainBody(itemorders[index]);
         });
   }
 
-  Widget _products(){
+
+  Widget getProductList(Acceptedorders itemorder){
+    return ListView.builder(
+        itemCount: itemorder.accproducts.length,
+        physics: NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemBuilder: (BuildContext context, int index) {
+          return _products(itemorder,index);
+        });
+  }
+
+  Widget _products(Acceptedorders itemorder,int index){
     return Container(
       margin: EdgeInsets.only(left: 20,right: 20),
       padding: EdgeInsets.only(bottom: 10),
@@ -286,10 +285,11 @@ class _OrderDetailState extends State<OrderDetailsNew> {
               children: [
                 Container(
                     width: MediaQuery.of(context).size.width-120,
-                    child: Text('Bounty Coconut filled Chocolate Bar BAr Bar',style: TextStyle(fontSize: 15,color: Colors.grey,fontWeight: FontWeight.bold),)),
+                    child: Text(itemorder.accproducts[index].productnameacc,style: TextStyle(fontSize: 15,color: Colors.grey,fontWeight: FontWeight.bold),)),
                 Container(
                     width: MediaQuery.of(context).size.width-340,
-                    child: Text('2 Nos',style: TextStyle(fontSize: 15,color: Colors.grey,fontWeight: FontWeight.bold),))
+                    child: Text(
+                      '${itemorder.accproducts[index].quantityacc}${' Nos'}',style: TextStyle(fontSize: 15,color: Colors.grey,fontWeight: FontWeight.bold),))
               ],
             ),
             Container(margin:EdgeInsets.only(top: 5),child: _getDivider())
@@ -327,13 +327,13 @@ class _OrderDetailState extends State<OrderDetailsNew> {
     );
   }
 
-  Widget _totalProductsText(){
+  Widget _totalProductsText(Acceptedorders itemorder){
     return Container(
       margin: EdgeInsets.only(left: 20,right: 15,top: 10,bottom: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Text('${'Total'}${' '}${'( '}${'2'}${' Products,'}${' Qty : '}${'5'}${' Nos.'}${' )'}',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.grey),),
+          Text('${'Total'}${' '}${'( '}${itemorder.productcountacc}${' Products,'}${' Qty : '}${itemorder.itemcountshopacc}${' Nos.'}${' )'}',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.grey),),
         ],
       ),
     );
@@ -351,7 +351,7 @@ class _OrderDetailState extends State<OrderDetailsNew> {
     );
   }
 
-  Widget _getContent() {
+  Widget _getContent(Acceptedorders itemorder) {
     return Container(
       color: Colors.white,
       child: Container(
@@ -430,7 +430,7 @@ class _OrderDetailState extends State<OrderDetailsNew> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(itemorders.shopname
+                      Text(itemorder.shopname
                         ,
                         // order?.packageInfo?.origination?.name ?? '',
                         style: TextStyle(
@@ -439,7 +439,7 @@ class _OrderDetailState extends State<OrderDetailsNew> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Text(itemorders.address,
+                      Text(itemorder.address,
                         // "5/23, Al Seeq Apartment, Al Maqtam Street Abudhab",
                         // order?.packageInfo?.origination?.getAddress() ?? '',
                         style: TextStyle(
@@ -457,7 +457,7 @@ class _OrderDetailState extends State<OrderDetailsNew> {
                       textColor: Colors.white,
                       color: colorPrimary,
                       onPressed: () {
-                        String phone =itemorders.contact;
+                        String phone =itemorder.contact;
                         if (phone != null && phone.trim().isNotEmpty) {
                           phone = 'tel:$phone';
                           if ( canLaunch(phone) != null) {
@@ -501,7 +501,7 @@ class _OrderDetailState extends State<OrderDetailsNew> {
                       color: Color.fromARGB(255, 159, 145, 101),
                       onPressed: () {
 
-                        String phone ='${'wa.me/'}${itemorders.contact}${'/?text'}=${Uri.parse('Hi')}';
+                        String phone ='${'wa.me/'}${itemorder.contact}${'/?text'}=${Uri.parse('Hi')}';
                         if (phone != null && phone.trim().isNotEmpty) {
                           phone = 'https:$phone';
                           if ( canLaunch(phone) != null) {
@@ -518,7 +518,7 @@ class _OrderDetailState extends State<OrderDetailsNew> {
                               width: 15.0,
                               height: 15,
                               fit: BoxFit.fitHeight,
-                              placeholder: 'assets/images/chat_icon.png',
+                              placeholder: 'assets/images/chat-icon.png',
                               image: 'assets/images/chat-icon.png',
                               // image: orders.image,
                               // image: order?.packageInfo?.origination?.logo ?? '',
@@ -537,7 +537,7 @@ class _OrderDetailState extends State<OrderDetailsNew> {
                     ),
                     RaisedButton(
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>DirectionNew()));
+                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>DirectionNew(longitude: itemorder.longitude,latitude:itemorder.latitude,shopname:itemorder.shopname,address:itemorder.address)));
 
                         // _launchUrl(
                         //   // 'http://maps.google.com/?saddr=My+Location&daddr=${task.order.first?.packageInfo?.location?.address}'
@@ -797,9 +797,16 @@ class _OrderDetailState extends State<OrderDetailsNew> {
   //     ],
   //   );
   // }
-
-  Widget _getDeliveryInfo() {
-    // DeliveryAddress deliveryAddress=history.address!=null&&history.address.length>0?history.address[0]:null;
+Widget getDeliveryAddress(){
+    return  ListView.builder(
+        itemCount:deliaddressacc.length,
+        physics: NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemBuilder: (BuildContext context, int index) {
+          return _getDeliveryInfo(deliaddressacc[index]);
+        });
+}
+  Widget _getDeliveryInfo(Deliaddressacc deliaddressacc) {
     return Container(
       color: Colors.white,
       margin: EdgeInsets.only(left: 20, right: 20, bottom: 10, top: 15),
@@ -840,7 +847,7 @@ class _OrderDetailState extends State<OrderDetailsNew> {
                   child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text('Usoof Mahaboob',
+                  Text(deliaddressacc.name,
                     // task.order.first?.packageInfo?.location?.getName(),
                     style: TextStyle(
                       fontSize: 16.0,
@@ -848,8 +855,7 @@ class _OrderDetailState extends State<OrderDetailsNew> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Text(
-                    '5/23, Al Seeq Apartment, Al Maqtam Street Abudhab',
+                  Text('${deliaddressacc.house}${" , "}${deliaddressacc.road_name}${" , "}${deliaddressacc.street_name}${" , "}${deliaddressacc.state}${" , "}${deliaddressacc.country}',
                     style: TextStyle(
                       color: Colors.black,
                     ),
@@ -872,7 +878,7 @@ class _OrderDetailState extends State<OrderDetailsNew> {
                   textColor: Colors.white,
                   color: colorPrimary,
                   onPressed: () {
-                    String phone ="6238839396";
+                    String phone =deliaddressacc.mobile;
                     if (phone != null && phone.trim().isNotEmpty) {
                       phone = 'tel:$phone';
                       if ( canLaunch(phone) != null) {
@@ -897,7 +903,7 @@ class _OrderDetailState extends State<OrderDetailsNew> {
                   textColor: Colors.white,
                   color: Color.fromARGB(255, 159, 145, 101),
                   onPressed: () {
-                    String phone ="wa.me/+916238839396/?text=${Uri.parse('Hi')}";
+                    String phone ='${'wa.me/'}${deliaddressacc.mobile}${'/?text'}=${Uri.parse('Hi')}';
                     if (phone != null && phone.trim().isNotEmpty) {
                       phone = 'https:$phone';
                       if ( canLaunch(phone) != null) {
@@ -927,7 +933,15 @@ class _OrderDetailState extends State<OrderDetailsNew> {
                 child:
                 RaisedButton(
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>DirectionNew()));
+                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>DirectionNewCustomer(longitude: deliaddressacc.long,
+                        latitude: deliaddressacc.lat,
+                        name: deliaddressacc.name,
+                        streetname:deliaddressacc.street_name,
+                        road_name:deliaddressacc.road_name,
+                        state:deliaddressacc.state,
+                        house:deliaddressacc.house
+
+                    )));
 
                     // _launchUrl(
                     //     // 'http://maps.google.com/?saddr=My+Location&daddr=${task.order.first?.packageInfo?.location?.address}'
