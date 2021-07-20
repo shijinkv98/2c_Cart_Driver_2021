@@ -264,6 +264,7 @@ class Accepted {
   String accepted;
   String orderstatus;
   String shipping;
+  String customer_image;
   String rupees;
   String ordertotal;
   String walletapplied;
@@ -276,6 +277,7 @@ class Accepted {
         this.ordertime,
         this.paymentmod,
         this.accepted,
+        this.customer_image,
         this.orderstatus,
         this.shipping,
         this.rupees,
@@ -290,6 +292,7 @@ class Accepted {
     ordertime = json['ordertime'].toString();
     paymentmod = json['paymentmod'].toString();
     accepted = json['accepted'].toString();
+    customer_image = json['customer_image'].toString();
     orderstatus = json['orderstatus'].toString();
     shipping = json['shipping'].toString();
     rupees = json['rupees'].toString();
@@ -318,6 +321,7 @@ class Accepted {
     data['accepted'] = this.accepted;
     data['orderstatus'] = this.orderstatus;
     data['shipping'] = this.shipping;
+    data['customer_image'] = this.customer_image;
     data['rupees'] = this.rupees;
     data['ordertotal'] = this.ordertotal;
     data['walletapplied'] = this.walletapplied;

@@ -917,7 +917,7 @@ class _HomeScreenState extends State<HomeScreenNew> {
           height: 60,
           fit: BoxFit.fitHeight,
           placeholder: 'assets/images/homemade.jpg',
-          image: 'assets/images/homemade.jpg',
+          image: accept.customer_image,
           // image: accept.image,
           // image: order?.packageInfo?.origination?.logo ?? '',
         ),
