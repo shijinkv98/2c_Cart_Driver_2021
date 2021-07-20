@@ -1,36 +1,49 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:projectname33/page/helper/apiparams.dart';
 import 'package:projectname33/page/helper/constants.dart';
 import 'package:projectname33/page/network/ApiCall.dart';
 import 'package:projectname33/page/network/response/HomeScreenResponse.dart';
+import 'package:projectname33/page/network/response/proceed_response.dart';
 import 'package:projectname33/page/notifier/checkbox_notifier.dart';
 import 'package:provider/provider.dart';
 
 import 'balance_screen_new.dart';
+import 'home_screen2.dart';
 class ViewDetailsNew extends StatefulWidget {
  Accepted accept;
- String orderDetailsId;
+ String orderid;
+ String name;
+ // String payment;
+ // String status;
 
 
 
 
   @override
-  _ViewDetailsNewState createState() => new _ViewDetailsNewState(item: this.accept,orderDetailsId: this.orderDetailsId);
-   ViewDetailsNew(Accepted accept,orderDetailsId)
+  _ViewDetailsNewState createState() => new _ViewDetailsNewState(item: this.accept,orderid: this.orderid,name: this.name);
+   ViewDetailsNew({this.accept,this.orderid,this.name})
   {
     this.accept=accept;
-    this.orderDetailsId=orderDetailsId;
+    this.orderid=orderid;
+    this.name=name;
+    // this.payment=payment;
+    // this.name=name;
 }
 }
 
 class _ViewDetailsNewState extends State<ViewDetailsNew> {
   bool value = false;
   Accepted item;
-  String orderDetailsId;
+  String orderid;
+  String name;
+  // String payment;
+  // String status;
+
   String _value = " ";
   CheckBoxNotifier _checkBoxNotifier;
-  _ViewDetailsNewState({this.item,this.orderDetailsId});
+  _ViewDetailsNewState({this.item,this.orderid,this.name});
 
   @override
   void initState() {
@@ -156,6 +169,10 @@ class _ViewDetailsNewState extends State<ViewDetailsNew> {
     );
   }
 Widget getContent(){
+  Deliaddressacc acceptdeliAddress =
+  item.deliaddressacc != null && item.deliaddressacc.length > 0
+      ? item.deliaddressacc[0]
+      : null;
     return Container(
       margin: EdgeInsets.only(left: 15,right: 15,top: 15),
       color:Colors.white,
@@ -175,7 +192,7 @@ Widget getContent(){
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Text('Order ID : ',style: TextStyle(color: Colors.black,fontSize: 12),),
-                        Text(item.orderid,style: TextStyle(color: Colors.black,fontSize: 15,fontWeight: FontWeight.bold),),
+                        Text(orderid,style: TextStyle(color: Colors.black,fontSize: 15,fontWeight: FontWeight.bold),),
                       ],
                     )),
                     Container(
@@ -200,7 +217,7 @@ Widget getContent(){
                   child: Padding(
                     padding: EdgeInsets.only(top: 25,bottom: 25),
                     child: Center(
-                      child: Text(item.orderstatus,style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
+                      child: Text(acceptdeliAddress.name,style: TextStyle(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
                     ),
                   ),
                 ),
@@ -225,17 +242,13 @@ Widget getContent(){
                         child:Consumer<CheckBoxNotifier>(
                           builder: (context,value,child){
                             return Checkbox(
-                              value: this.value,
-                              activeColor: colorPrimary,
-                              onChanged: (bool value) {
-                                setState(() {
-                                  this.value = value;
-                                });
-                              },
+                            value: value.isChecked,
+                            activeColor: colorPrimary,
+                            onChanged: (bool value2) {
+                            value.isChecked = value2;
+                            },
                             );
-                          }
-
-                        ),
+                          }),
                       ),
                       Container(
                           width: MediaQuery.of(context).size.width-60,
@@ -255,8 +268,9 @@ Widget getContent(){
                  ApiCall().showToast("Please accept the Verification box");
                }
                else{
-
+                 proceed();
                }
+
                 // Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => HomeScreenNew()));
               },
               child: Container(
@@ -276,4 +290,28 @@ Widget getContent(){
 
     );
 }
+
+  Future<void> proceed() async {
+    // _updateNotifier.isProgressShown = true;
+
+    Map body = {
+      // name,email,phone_number,password
+      ORDER_ID: orderid,
+      CHECKED: "1"
+    };
+    ApiCall()
+        .execute<ProceedResponse, Null>(ORDER_PROCEED_URL, body)
+        .then((ProceedResponse result) {
+      // _updateNotifier.isProgressShown = true;
+      if (result.success == null) {
+        if (result.message != null) ApiCall().showToast(result.message);
+      }
+      ApiCall().showToast(result.message != null ? result.message : "");
+      if (result.success == "1") {
+        ApiCall().showToast(result.message);
+
+      }
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => HomeScreenNew()));
+    });
+  }
 }

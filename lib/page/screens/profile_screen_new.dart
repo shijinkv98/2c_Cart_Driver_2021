@@ -274,7 +274,8 @@ class _ProfileScreenState extends State<ProfileScreenNew> {
             return
               enableDataHome();
               // errorScreen('Error: ${snapshot.error}');
-          } else {
+          }
+          else {
             return progressBar;
           }
         },

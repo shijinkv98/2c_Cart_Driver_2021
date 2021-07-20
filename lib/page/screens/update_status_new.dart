@@ -10,16 +10,20 @@ import 'delivery_confirmation.dart';
 
 class UpdateStatusNew extends StatefulWidget {
   Accepted accept;
-  String orderDetailsId;
-  String price;
+  String orderid;
+  String rupees;
+  String ordertotal;
+
 
   @override
-  _UpdateStatusNewState createState() => new _UpdateStatusNewState(item: this.accept,orderDetailsId: this.orderDetailsId,price: this.price);
-  UpdateStatusNew(Accepted accept,orderDetailsId,price)
+  _UpdateStatusNewState createState() => new _UpdateStatusNewState(item: this.accept,orderid: this.orderid,rupees: this.rupees,ordertotal:this.ordertotal);
+  UpdateStatusNew({this.accept,this.orderid,this.rupees,this.ordertotal})
   {
     this.accept=accept;
-    this.orderDetailsId=orderDetailsId;
-    this.price=price;
+    this.orderid=orderid;
+    this.rupees=rupees;
+    this.ordertotal=ordertotal;
+
   }
 }
 
@@ -29,11 +33,13 @@ class _UpdateStatusNewState extends State<UpdateStatusNew> {
   String _selectedGender = 'Door closed';
   String _value = " ";
   Accepted item;
-  String orderDetailsId;
-  String price;
+  String orderid;
+  String rupees;
+  String ordertotal;
 
 
-  _UpdateStatusNewState({this.item,this.orderDetailsId,this.price});
+
+  _UpdateStatusNewState({this.item,this.orderid,this.rupees,this.ordertotal});
 
   @override
   void initState() {
@@ -227,7 +233,7 @@ class _UpdateStatusNewState extends State<UpdateStatusNew> {
                   children: [
                     InkWell(
                       onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ReasonForReturn(this.orderDetailsId)));
+                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ReasonForReturn(this.orderid)));
                       },
                       child: ListTile(
                         leading: Radio(
@@ -239,7 +245,7 @@ class _UpdateStatusNewState extends State<UpdateStatusNew> {
                     ),
                     InkWell(
                       onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => DeliveryConfirmation(this.price,this.orderDetailsId)));
+                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => DeliveryConfirmation(rupees:this.rupees,orderid:this.orderid,ordertotal:this.ordertotal)));
                       },
                       child: ListTile(
                         leading: Radio(

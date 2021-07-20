@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:projectname33/page/custom/custom_switch.dart';
 import 'package:projectname33/page/helper/apiparams.dart';
@@ -25,6 +27,12 @@ class _HomeScreenState extends State<HomeScreenNew> {
   HomeScreenResponse homeScreenResponse;
   bool isSwitched = false;
   String _value = "";
+  Timer timer;
+  @override
+  void initState(){
+    timer = Timer.periodic(Duration(seconds: 1), (Timer t) => setState(() {}));
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -39,10 +47,11 @@ class _HomeScreenState extends State<HomeScreenNew> {
             return getContent();
           } else if (snapshot.hasError) {
             return
-              // enableDataHome();
-              errorScreen('Error: ${snapshot.error}');
-          } else {
-            return progressBar;
+              enableDataHome();
+             // errorScreen('Error: ${snapshot.error}');
+          }
+          else {
+            return  progressBar;
           }
         },
       ),
@@ -61,21 +70,21 @@ class _HomeScreenState extends State<HomeScreenNew> {
             ],
           ),
         ),
-        // homeScreenResponse.orders.length != 0 ? Align(
-        //   alignment: Alignment.center,
-        //   child:Container(
-        //     width: MediaQuery.of(context).size.width,
-        //     child:AlertDialog(
-        //       backgroundColor: Colors.transparent,
-        //       // title: setupAlertDialoadContainer(orders,context),
-        //       // Container(child: Padding(
-        //       //   padding: const EdgeInsets.all(8.0),
-        //       //   child: Text('Pick Item',style: TextStyle(color: Colors.white),),
-        //       // ),color: Colors.blueAccent,),
-        //       content: setupAlertDialoadContainer(),
-        //     )
-        //   )
-        // ): Align(child: Container(),),
+        homeScreenResponse.orders.length != 0 ? Align(
+          alignment: Alignment.center,
+          child:Container(
+            width: MediaQuery.of(context).size.width,
+            child:AlertDialog(
+              backgroundColor: Colors.transparent,
+              // title: setupAlertDialoadContainer(orders,context),
+              // Container(child: Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: Text('Pick Item',style: TextStyle(color: Colors.white),),
+              // ),color: Colors.blueAccent,),
+              content: setupAlertDialoadContainer(),
+            )
+          )
+        ): Align(child: Container(),),
 
         Align(
           alignment: Alignment.bottomCenter,
@@ -91,7 +100,7 @@ class _HomeScreenState extends State<HomeScreenNew> {
     Map body = {
       // name,email,phone_number,password
       DECISION: "1",
-      ORDER_DETAILS_ID: homeScreenResponse.orders[index].orderid
+      ORDER_ID: homeScreenResponse.orders[index].orderid
     };
     ApiCall()
         .execute<OrderAccptResponse, Null>(ORDER_ACCEPT_REJECT_URL, body)
@@ -103,8 +112,9 @@ class _HomeScreenState extends State<HomeScreenNew> {
       ApiCall().showToast(result.message != null ? result.message : "");
       if (result.success == "1") {
         ApiCall().showToast(result.message);
-        NextPageReplacement(context, HomeScreenNew());
+
       }
+      updateUI();
     });
   }
 
@@ -114,7 +124,7 @@ class _HomeScreenState extends State<HomeScreenNew> {
     Map body = {
       // name,email,phone_number,password
       DECISION: "2",
-      ORDER_DETAILS_ID: homeScreenResponse.orders[index].orderid
+      ORDER_ID: homeScreenResponse.orders[index].orderid
     };
     ApiCall()
         .execute<OrderAccptResponse, Null>(ORDER_ACCEPT_REJECT_URL, body)
@@ -131,313 +141,327 @@ class _HomeScreenState extends State<HomeScreenNew> {
     });
   }
 
-  // Widget _listOrdersDriver(Orders orders, index) {
-  //   return ListTile(
-  //     title: Card(
-  //       margin: EdgeInsets.only(left: 0, right: 0),
-  //       color: Colors.white,
-  //       elevation: 10,
-  //       shape: RoundedRectangleBorder(
-  //         borderRadius: BorderRadius.only(
-  //           topLeft: Radius.circular(10),
-  //           topRight: Radius.circular(10),
-  //           bottomLeft: Radius.circular(10),
-  //           bottomRight: Radius.circular(10),
-  //         ),
-  //       ),
-  //       child: Column(
-  //         mainAxisSize: MainAxisSize.min,
-  //         mainAxisAlignment: MainAxisAlignment.center,
-  //         crossAxisAlignment: CrossAxisAlignment.center,
-  //         children: <Widget>[
-  //           Container(
-  //             width: double.infinity,
-  //             child: DecoratedBox(
-  //               decoration: BoxDecoration(
-  //                   color: colorPrimary,
-  //                   borderRadius: BorderRadius.only(
-  //                       topLeft: Radius.circular(10),
-  //                       topRight: Radius.circular(10))),
-  //               child: Center(
-  //                 child: Padding(
-  //                   padding: EdgeInsets.all(8),
-  //                   child: Text('Orders',
-  //                       style: TextStyle(
-  //                           fontWeight: FontWeight.w400,
-  //                           fontSize: 20,
-  //                           color: Colors.white)),
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //           Padding(
-  //             padding: const EdgeInsets.only(
-  //                 top: 8, right: 10, left: 10, bottom: 10),
-  //             child: Column(
-  //               children: [
-  //                 Row(
-  //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                   children: <Widget>[
-  //                     Text(
-  //                       '${'Order Id : '}${orders.orderid} ',
-  //                       style: TextStyle(
-  //                           color: Colors.black, fontWeight: FontWeight.bold),
-  //                     ),
-  //                     Row(
-  //                       children: [
-  //                         Icon(
-  //                           Icons.access_time,
-  //                           size: 20,
-  //                         ),
-  //                         SizedBox(
-  //                           width: 5.0,
-  //                         ),
-  //                         Text(
-  //                           orders.ordertime,
-  //                           // task.createdAt,
-  //                           style: TextStyle(
-  //                               color: colorPrimary,
-  //                               fontWeight: FontWeight.bold),
-  //                         ),
-  //                       ],
-  //                     )
-  //                   ],
-  //                 ),
-  //                 SizedBox(
-  //                   height: 15.0,
-  //                 ),
-  //                 orderInfo4(ordersNew),
-  //                 // OrderInfo2(
-  //                 //   order: task.order.length < 1 ? null : task.order.first,
-  //                 // ),
-  //                 SizedBox(
-  //                   height: 10.0,
-  //                 ),
-  //                 // orderInfo5(ordersNew),
-  //                 // OrderInfo1(
-  //                 //   // order: task.order.length < 1 ? null : task.order.first,
-  //                 //   task: task,
-  //                 // ),
-  //                 SizedBox(
-  //                   height: 10.0,
-  //                 ),
-  //                 // Row(
-  //                 //   mainAxisAlignment: MainAxisAlignment.start,
-  //                 //   children: [
-  //                 //     Text(
-  //                 //       'Order status:',
-  //                 //       style: TextStyle(
-  //                 //         fontSize: 13.0,
-  //                 //         color: Colors.black,
-  //                 //         // fontWeight: FontWeight.w600,
-  //                 //       ),
-  //                 //     ),
-  //                 //     SizedBox(
-  //                 //       width: 5.0,
-  //                 //     ),
-  //                 //     // Text('',
-  //                 //     //   // task.statusText,
-  //                 //     //   style: TextStyle(
-  //                 //     //     fontSize: 14.0,
-  //                 //     //     color: Colors.black,
-  //                 //     //     fontWeight: FontWeight.w500,
-  //                 //     //   ),
-  //                 //     // ),
-  //                 //   ],
-  //                 // ),
-  //                 SizedBox(
-  //                   height: 10.0,
-  //                 ),
-  //                 Row(
-  //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                   children: <Widget>[
-  //                     Expanded(
-  //                       flex: 1,
-  //                       child: RaisedButton(
-  //                         padding: const EdgeInsets.all(8.0),
-  //                         textColor: Colors.white,
-  //                         color: colorPrimary,
-  //                         onPressed: () {
-  //                           acceptOrder(index);
-  //                           setState(() {
-  //                             getContent();
-  //                           });
-  //                           // Navigator.of(context).pushNamed('/homenew');
-  //                           // NextPageReplacement(context,HomeScreenNew());
-  //                           // orderUpdateStatus?.update(true, task, null);
-  //                           // updateTaskApi(task);
-  //                         },
-  //                         child: new Text("Accept"),
-  //                       ),
-  //                     ),
-  //                     SizedBox(
-  //                       width: 10.0,
-  //                     ),
-  //                     Expanded(
-  //                       flex: 1,
-  //                       child: RaisedButton(
-  //                         onPressed: () {
-  //                           // rejectOrder(index);
-  //                           // setState(() {
-  //                           //   getContent();
-  //                           // });
-  //                           Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => ReportReAssignNew(ordersNew,homeScreenResponse.orders[index].orderid)));
-  //                         },
-  //                         textColor: Colors.white,
-  //                         color: iconColor1,
-  //                         padding: const EdgeInsets.all(8.0),
-  //                         child: new Text(
-  //                           "Reject",
-  //                         ),
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
+  Widget _listOrdersDriver(Orders orders, index) {
+    return ListTile(
+      title: Card(
+        margin: EdgeInsets.only(left: 0, right: 0),
+        color: Colors.white,
+        elevation: 10,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(10),
+            topRight: Radius.circular(10),
+            bottomLeft: Radius.circular(10),
+            bottomRight: Radius.circular(10),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              width: double.infinity,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                    color: colorPrimary,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10))),
+                child: Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Text('Orders',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 20,
+                            color: Colors.white)),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                  top: 8, right: 10, left: 10, bottom: 10),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Container(
+                        width:MediaQuery.of(context).size.width -335,
+                        child: Text(
+                          '${'Order Id : '}${orders.orderid} ',
+                          style: TextStyle(
+                              color: Colors.black, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Container(
+                        // width:MediaQuery.of(context).size.width -335,
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.access_time,
+                              size: 20,
+                            ),
+                            SizedBox(
+                              width: 5.0,
+                            ),
+                            Text(
+                              orders.ordertime,
+                              // task.createdAt,
+                              style: TextStyle(
+                                  color: colorPrimary,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    height: 15.0,
+                  ),
+                  orderInfo4(orders),
+                  // OrderInfo2(
+                  //   order: task.order.length < 1 ? null : task.order.first,
+                  // ),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  orderInfo5(orders),
+                  // OrderInfo1(
+                  //   // order: task.order.length < 1 ? null : task.order.first,
+                  //   task: task,
+                  // ),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.start,
+                  //   children: [
+                  //     Text(
+                  //       'Order status:',
+                  //       style: TextStyle(
+                  //         fontSize: 13.0,
+                  //         color: Colors.black,
+                  //         // fontWeight: FontWeight.w600,
+                  //       ),
+                  //     ),
+                  //     SizedBox(
+                  //       width: 5.0,
+                  //     ),
+                  //     // Text('',
+                  //     //   // task.statusText,
+                  //     //   style: TextStyle(
+                  //     //     fontSize: 14.0,
+                  //     //     color: Colors.black,
+                  //     //     fontWeight: FontWeight.w500,
+                  //     //   ),
+                  //     // ),
+                  //   ],
+                  // ),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Expanded(
+                        flex: 1,
+                        child: RaisedButton(
+                          padding: const EdgeInsets.all(8.0),
+                          textColor: Colors.white,
+                          color: colorPrimary,
+                          onPressed: () {
+                            acceptOrder(index);
 
-  // Widget orderInfo5(Orders orders) {
-  //   return Container(
-  //     child: DecoratedBox(
-  //       decoration: const BoxDecoration(
-  //         // color: colorGrayBg,
-  //           color: colorGrayBg,
-  //           borderRadius: BorderRadius.all(Radius.circular(5))),
-  //       child: Padding(
-  //         padding: const EdgeInsets.all(8.0),
-  //         child: Row(
-  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //           children: <Widget>[
-  //             Row(
-  //               children: <Widget>[
-  //                 Image(
-  //                   Image.assetImage("assets/images/quantity.png"),
-  //                   width: 15.0,
-  //                   color: iconColor1,
-  //                   fit: BoxFit.contain,
-  //                 ),
-  //                 SizedBox(
-  //                   width: 5,
-  //                 ),
-  //                 // Icon(Icons.line_style,
-  //                 //     color: Color.fromARGB(255, 163, 148, 103)),
-  //                 Column(
-  //                   crossAxisAlignment: CrossAxisAlignment.start,
-  //                   children: <Widget>[
-  //                     Text(
-  //                       'Quantity',
-  //                       style: TextStyle(
-  //                         fontSize: 10.0,
-  //                         color: colorPrimary,
-  //                       ),
-  //                     ),
-  //                     Text(
-  //                       '${}${' Nos'}',
-  //                       // '${order?.packageInfo?.packages?.first?.amount} Nos',
-  //                       // '${task.totalQuantity} Nos',
-  //                       style: TextStyle(
-  //                         color: Colors.black,
-  //                         fontWeight: FontWeight.w600,
-  //                         fontSize: 10.0,
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 )
-  //               ],
-  //             ),
-  //             Row(
-  //               children: <Widget>[
-  //                 // Icon(Icons.line_weight, color: iconColor1),
-  //                 Image(
-  //                   image: AssetImage("assets/images/weight.png"),
-  //                   width: 15.0,
-  //                   color: iconColor1,
-  //                   fit: BoxFit.contain,
-  //                 ),
-  //                 SizedBox(
-  //                   width: 5,
-  //                 ),
-  //                 Column(
-  //                   crossAxisAlignment: CrossAxisAlignment.start,
-  //                   children: <Widget>[
-  //                     Text(
-  //                       'Weight',
-  //                       style: TextStyle(
-  //                         fontSize: 10.0,
-  //                         color: colorPrimary,
-  //                       ),
-  //                     ),
-  //                     Text(
-  //                       "40 Kgs",
-  //                       // order?.packageInfo?.packages?.first?.weight ?? '',
-  //                       // task.totalWeight ?? '',
-  //                       style: TextStyle(
-  //                         color: Colors.black,
-  //                         fontWeight: FontWeight.w600,
-  //                         fontSize: 10.0,
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 )
-  //               ],
-  //             ),
-  //             // Row(
-  //             //   children: <Widget>[
-  //             //     // Icon(
-  //             //     //   Icons.timelapse,
-  //             //     //   color: iconColor1,
-  //             //     // ),
-  //             //     Image(
-  //             //       image: AssetImage("assets/images/size.png"),
-  //             //       width: 15.0,
-  //             //       color: iconColor1,
-  //             //       fit: BoxFit.contain,
-  //             //     ),
-  //             //     SizedBox(
-  //             //       width: 5,
-  //             //     ),
-  //             //     Column(
-  //             //       crossAxisAlignment: CrossAxisAlignment.start,
-  //             //       children: <Widget>[
-  //             //         Text(
-  //             //           'Size',
-  //             //           style: TextStyle(
-  //             //             fontSize: 10.0,
-  //             //             color: colorPrimary,
-  //             //           ),
-  //             //         ),
-  //             //         Text(
-  //             //           "30 x 12",
-  //             //           // order?.packageInfo?.packages?.first?.cost ?? '',
-  //             //           // task.maxLength ?? '',
-  //             //           style: TextStyle(
-  //             //             color: Colors.black,
-  //             //             fontWeight: FontWeight.w600,
-  //             //             fontSize: 10.0,
-  //             //           ),
-  //             //         ),
-  //             //       ],
-  //             //     )
-  //             //   ],
-  //             // ),
-  //           ],
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
+                            // Navigator.of(context).pushNamed('/homenew');
+                            // NextPageReplacement(context,HomeScreenNew());
+                            // orderUpdateStatus?.update(true, task, null);
+                            // updateTaskApi(task);
+                          },
+                          child: new Text("Accept"),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10.0,
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: RaisedButton(
+                          onPressed: () {
+                            // rejectOrder(index);
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => ReportReAssignNew(orders,homeScreenResponse.orders[index].orderid)));
+                          },
+                          textColor: Colors.white,
+                          color: iconColor1,
+                          padding: const EdgeInsets.all(8.0),
+                          child: new Text(
+                            "Reject",
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-  Widget orderInfo4() {
-    // Ordersnew deliAddress =
-    // ordersNew.addressnew != null && ordersNew.addressnew.length > 0
-    //     ? ordersNew.addressnew[0]
-    //     : null;
+  Widget orderInfo5(Orders orders) {
+    Ordersnew count =
+    orders.ordersnew != null && orders.ordersnew.length > 0
+        ? orders.ordersnew[0]
+        : null;
+    return Container(
+      child: DecoratedBox(
+        decoration: const BoxDecoration(
+          // color: colorGrayBg,
+            color: colorGrayBg,
+            borderRadius: BorderRadius.all(Radius.circular(5))),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  FadeInImage.assetNetwork(
+                    width: 15.0,
+                    height: 15,
+                    fit: BoxFit.fitHeight,
+                    placeholder: 'assets/images/quantity.png',
+                    image: 'assets/images/quantity.png',
+                    // image: orders.image,
+                    // image: order?.packageInfo?.origination?.logo ?? '',
+                  ),
+                  // Image(
+                  //   Image.assetImage("assets/images/quantity.png"),
+                  //   width: 15.0,
+                  //   color: iconColor1,
+                  //   fit: BoxFit.contain,
+                  // ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  // Icon(Icons.line_style,
+                  //     color: Color.fromARGB(255, 163, 148, 103)),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        'Quantity',
+                        style: TextStyle(
+                          fontSize: 10.0,
+                          color: colorPrimary,
+                        ),
+                      ),
+                      Text(
+                        '${count.itemcount}${' Nos'}',
+                        // '${order?.packageInfo?.packages?.first?.amount} Nos',
+                        // '${task.totalQuantity} Nos',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 10.0,
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+              // Row(
+              //   children: <Widget>[
+              //     // Icon(Icons.line_weight, color: iconColor1),
+              //     Image(
+              //       image: AssetImage("assets/images/weight.png"),
+              //       width: 15.0,
+              //       color: iconColor1,
+              //       fit: BoxFit.contain,
+              //     ),
+              //     SizedBox(
+              //       width: 5,
+              //     ),
+              //     Column(
+              //       crossAxisAlignment: CrossAxisAlignment.start,
+              //       children: <Widget>[
+              //         Text(
+              //           'Weight',
+              //           style: TextStyle(
+              //             fontSize: 10.0,
+              //             color: colorPrimary,
+              //           ),
+              //         ),
+              //         Text(
+              //           "40 Kgs",
+              //           // order?.packageInfo?.packages?.first?.weight ?? '',
+              //           // task.totalWeight ?? '',
+              //           style: TextStyle(
+              //             color: Colors.black,
+              //             fontWeight: FontWeight.w600,
+              //             fontSize: 10.0,
+              //           ),
+              //         ),
+              //       ],
+              //     )
+              //   ],
+              // ),
+              // Row(
+              //   children: <Widget>[
+              //     // Icon(
+              //     //   Icons.timelapse,
+              //     //   color: iconColor1,
+              //     // ),
+              //     Image(
+              //       image: AssetImage("assets/images/size.png"),
+              //       width: 15.0,
+              //       color: iconColor1,
+              //       fit: BoxFit.contain,
+              //     ),
+              //     SizedBox(
+              //       width: 5,
+              //     ),
+              //     Column(
+              //       crossAxisAlignment: CrossAxisAlignment.start,
+              //       children: <Widget>[
+              //         Text(
+              //           'Size',
+              //           style: TextStyle(
+              //             fontSize: 10.0,
+              //             color: colorPrimary,
+              //           ),
+              //         ),
+              //         Text(
+              //           "30 x 12",
+              //           // order?.packageInfo?.packages?.first?.cost ?? '',
+              //           // task.maxLength ?? '',
+              //           style: TextStyle(
+              //             color: Colors.black,
+              //             fontWeight: FontWeight.w600,
+              //             fontSize: 10.0,
+              //           ),
+              //         ),
+              //       ],
+              //     )
+              //   ],
+              // ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget orderInfo4(Orders orders) {
+    Address deliAddress =
+    orders.address != null && orders.address.length > 0
+        ? orders.address[0]
+        : null;
     return Row(
       children: <Widget>[
         FadeInImage.assetNetwork(
@@ -456,7 +480,7 @@ class _HomeScreenState extends State<HomeScreenNew> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text("abcd",
+              Text(deliAddress.name,
                 // order?.packageInfo?.origination?.name ?? '',
                 style: TextStyle(
                   fontSize: 13.0,
@@ -464,8 +488,8 @@ class _HomeScreenState extends State<HomeScreenNew> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Text(
-                'ordersNew.addressnew',
+              Text('${deliAddress.house}${' , '}${deliAddress.roadName}${' , '}${deliAddress.streetName}${' , '}${deliAddress.state}${' , '}${deliAddress.country}',
+
                 // order?.packageInfo?.origination?.getAddress() ?? '',
                 style: TextStyle(
                   color: Colors.black,
@@ -694,12 +718,12 @@ class _HomeScreenState extends State<HomeScreenNew> {
                                       MaterialPageRoute(
                                           builder: (BuildContext context) =>
                                               // UpdateStatusNew(accept,homeScreenResponse.accepted[index].orderid,homeScreenResponse.accepted[index].shipping)))
-                                              ViewDetailsNew(accept,homeScreenResponse.accepted[index].orderid)))
+                                              ViewDetailsNew(accept:accept,orderid:homeScreenResponse.accepted[index].orderid)))
                                       : Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (BuildContext context) =>
-                                              UpdateStatusNew(accept,homeScreenResponse.accepted[index].orderid,homeScreenResponse.accepted[index].shipping)));
+                                              UpdateStatusNew(accept:accept,orderid:homeScreenResponse.accepted[index].orderid,rupees:homeScreenResponse.accepted[index].rupees,ordertotal:homeScreenResponse.accepted[index].ordertotal)));
                                 },
                                 child: new Text("Update Status"),
                               ),
@@ -1231,38 +1255,40 @@ class _HomeScreenState extends State<HomeScreenNew> {
         });
   }
 
-  // Widget setupAlertDialoadContainer() {
-  //   return Column(
-  //     mainAxisSize: MainAxisSize.min,
-  //     children: [
-  //       Container(
-  //         color: Colors.transparent,
-  //         height: MediaQuery.of(context)
-  //             .size
-  //             .width, // Change as per your requirement
-  //         width: MediaQuery.of(context)
-  //             .size
-  //             .width, // Change as per your requirement
-  //         child: ListView.builder(
-  //           // scrollDirection: Axis.vertical,
-  //           itemCount: homeScreenResponse.orders.length,
-  //           itemBuilder: (BuildContext context, int index) {
-  //             return _listOrdersDriver(homeScreenResponse.orders[index], index);
-  //           },
-  //         ),
-  //       ),
-  //       Align(
-  //         alignment: Alignment.bottomRight,
-  //         child: FlatButton(
-  //           onPressed: () {
-  //             Navigator.pop(context);
-  //           },
-  //           child: Text("Cancel"),
-  //         ),
-  //       )
-  //     ],
-  //   );
-  // }
+  Widget setupAlertDialoadContainer() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          color: Colors.transparent,
+          height: MediaQuery.of(context)
+              .size
+              .width, // Change as per your requirement
+          width: MediaQuery.of(context)
+              .size
+              .width, // Change as per your requirement
+          child:
+
+          ListView.builder(
+            // scrollDirection: Axis.vertical,
+            itemCount: 1,
+            itemBuilder: (BuildContext context, int index) {
+              return _listOrdersDriver(homeScreenResponse.orders[index], index);
+            },
+          ),
+        ),
+        Align(
+          alignment: Alignment.bottomRight,
+          child: FlatButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text("Cancel"),
+          ),
+        )
+      ],
+    );
+  }
 
   Widget enableDataHome() => Center(
     child: Column(

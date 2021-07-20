@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:projectname33/page/network/ApiCall.dart';
 import 'package:projectname33/page/network/response/HomeScreenResponse.dart';
 import 'package:projectname33/page/network/response/delivery_confirm_response.dart';
+import 'package:projectname33/page/network/response/delivery_payment_response.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -18,25 +19,29 @@ import 'home_screen2.dart';
 
 class DeliveryConfirmation extends StatefulWidget {
   Accepted accept;
-  String price;
-  String orderDetailsId;
+  String rupees;
+  String orderid;
+  String ordertotal;
   @override
   _DeliveryConfirmationState createState() =>
-      new _DeliveryConfirmationState(item: this.accept, price: this.price,orderDetailsId:this.orderDetailsId);
-  DeliveryConfirmation(price,orderDetailsId) {
+      new _DeliveryConfirmationState(item: this.accept, rupees: this.rupees,orderid:this.orderid,ordertotal:this.ordertotal);
+  DeliveryConfirmation({this.rupees, this.ordertotal, this.orderid}) {
     this.accept = accept;
-    this.price = price;
-    this.orderDetailsId = orderDetailsId;
+    this.rupees = rupees;
+    this.orderid = orderid;
+    this.ordertotal = ordertotal;
   }
 }
 
 class _DeliveryConfirmationState extends State<DeliveryConfirmation> {
   bool value = false;
   Accepted item;
-  String price;
-  String orderDetailsId;
+  String rupees;
+  String orderid;
+  String ordertotal;
+
   CheckBoxNotifier _checkBoxNotifier;
-  _DeliveryConfirmationState({this.item, this.price,this.orderDetailsId});
+  _DeliveryConfirmationState({this.item, this.rupees,this.orderid,this.ordertotal});
 
   @override
   void initState() {
@@ -153,7 +158,7 @@ class _DeliveryConfirmationState extends State<DeliveryConfirmation> {
                             keyboardType: TextInputType.multiline,
                             textInputAction: TextInputAction.next,
                             decoration: InputDecoration(
-                              hintText: '${'AED '}${price}',
+                              hintText: '${rupees}${' '}${ordertotal}',
                               hintStyle: TextStyle(
                                   color: Colors.grey,
                                   fontWeight: FontWeight.bold),
@@ -225,40 +230,31 @@ class _DeliveryConfirmationState extends State<DeliveryConfirmation> {
                             ),
                           ),
                           InkWell(
-                            onTap: () {
-                              Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          HomeScreenNew()));
+                            onTap: (){
+                              if(!_checkBoxNotifier.isChecked){
+                                ApiCall().showToast("Please accept the Verification box");
+                              }
+                              else{
+                                confirmed(context);
+                              }
                             },
-                            child: InkWell(
-                              onTap: (){
-                                if(!_checkBoxNotifier.isChecked){
-                                  ApiCall().showToast("Please accept the Verification box");
-                                }
-                                else{
-                                  confirmed(context);
-                                }
-                              },
-                              child: Container(
-                                height: 35,
-                                margin: EdgeInsets.only(bottom: 20),
-                                decoration: BoxDecoration(
-                                  color: iconColor1,
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Container(
-                                    margin: EdgeInsets.only(left: 25, right: 25),
-                                    child: Center(
-                                        child: Text(
-                                      "Confirmed",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15),
-                                    ))),
+                            child: Container(
+                              height: 35,
+                              margin: EdgeInsets.only(bottom: 20),
+                              decoration: BoxDecoration(
+                                color: iconColor1,
+                                borderRadius: BorderRadius.circular(4),
                               ),
+                              child: Container(
+                                  margin: EdgeInsets.only(left: 25, right: 25),
+                                  child: Center(
+                                      child: Text(
+                                    "Confirmed",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15),
+                                  ))),
                             ),
                           )
                         ],
@@ -278,12 +274,13 @@ class _DeliveryConfirmationState extends State<DeliveryConfirmation> {
 
     Map body = {
       // name,email,phone_number,password
-      ORDER_DETAILS_ID_DELIVERY: orderDetailsId,
-      CHECKED:"1",
+      ORDER_ID: orderid,
+      AMOUNT:ordertotal,
+      PAYMENTRECEIVED:"1",
     };
     ApiCall()
-        .execute<DeliveryConfirmResponse, Null>(ORDER_DELIVERED_URL, body)
-        .then((DeliveryConfirmResponse result) {
+        .execute<DeliveryPaymentResponse, Null>(DELIVERY_PAYMENT, body)
+        .then((DeliveryPaymentResponse result) {
       // _updateNotifier.isProgressShown = true;
       if (result.success == null) {
         if (result.message != null) ApiCall().showToast(result.message);

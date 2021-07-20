@@ -9,11 +9,13 @@ import 'package:projectname33/page/helper/user.dart';
 import 'package:projectname33/page/network/response/HomeScreenResponse.dart';
 import 'package:projectname33/page/network/response/cod_balance_response.dart';
 import 'package:projectname33/page/network/response/delivery_confirm_response.dart';
+import 'package:projectname33/page/network/response/delivery_payment_response.dart';
 import 'package:projectname33/page/network/response/driver_new_order_response.dart';
 import 'package:projectname33/page/network/response/forgotPasswordResponse.dart';
 import 'package:projectname33/page/network/response/notification_response.dart';
 import 'package:projectname33/page/network/response/order_accept_response.dart';
 import 'package:projectname33/page/network/response/order_details_response.dart';
+import 'package:projectname33/page/network/response/proceed_response.dart';
 import 'package:projectname33/page/network/response/profile_get_response.dart';
 import 'package:projectname33/page/network/response/profile_update_response.dart';
 import 'package:projectname33/page/network/response/report_reassign_response.dart';
@@ -262,6 +264,10 @@ class ApiCall {
       return DeliveryConfirmResponse.fromJson(json) as T;
     }else if (T == NotificationResponse) {
       return NotificationResponse.fromJson(json) as T;
+    }else if (T == ProceedResponse) {
+      return ProceedResponse.fromJson(json) as T;
+    }else if (T == DeliveryPaymentResponse) {
+      return DeliveryPaymentResponse.fromJson(json) as T;
     } else if (T == ReportReAssignResponse) {
       return ReportReAssignResponse.fromJson(json) as T;
      // } else if (T == Message) {

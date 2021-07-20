@@ -1,8 +1,11 @@
 
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:projectname33/page/helper/constants.dart';
 import 'package:projectname33/page/network/ApiCall.dart';
+import 'package:projectname33/page/network/response/order_accept_response.dart';
 import 'package:projectname33/page/network/response/report_reassign_response.dart';
 import '../helper/apiparams.dart';
 import '../helper/apiurldata.dart';
@@ -10,26 +13,29 @@ import '../network/response/HomeScreenResponse.dart';
 import 'balance_screen_new.dart';
 import 'home_screen2.dart';
 class ReportReAssignNew extends StatefulWidget {
-  Ordersnew ordersNew;
-  String orderDetailsId;
+  Orders orders;
+  String orderid;
   @override
-  _ReportReAssignNewState createState() => new _ReportReAssignNewState(item: this.ordersNew,orderDetailsId: this.orderDetailsId,);
-  ReportReAssignNew(Ordersnew ordersNew,orderDetailsId)
+  _ReportReAssignNewState createState() => new _ReportReAssignNewState(item: this.orders,orderid: this.orderid,);
+  ReportReAssignNew(Orders orders,orderid)
   {
-    this.ordersNew=ordersNew;
-    this.orderDetailsId=orderDetailsId;
+    this.orders=orders;
+    this.orderid=orderid;
   }
 }
 
 class _ReportReAssignNewState extends State<ReportReAssignNew> {
 String _value = " ";
-Ordersnew item;
-String orderDetailsId;
+Orders item;
+String orderid;
+
 final GlobalKey<FormState> reportKey = GlobalKey();
-_ReportReAssignNewState({this.item,this.orderDetailsId});
+_ReportReAssignNewState({this.item,this.orderid});
 
   @override
   void initState() {
+
+
     super.initState();
   }
 
@@ -168,7 +174,7 @@ Widget getContent(){
               ),
               Container(
                 margin: EdgeInsets.only(top: 15,right: 5,left: 5),
-                child:  Text(' You can remove underline by using InputBorder class as given below. TextField( decoration: InputDecoration( border: InputBorder.none, hintText: "TextInput without Underline"), controller: myController, ),',
+                child:  Text('Please enter the reason for rejecting order below',
                   style: TextStyle(color: Colors.grey,fontSize: 15),textAlign: TextAlign.center,
                 ),
               ),
@@ -240,7 +246,7 @@ Widget getContent(){
                         reportKey.currentState.validate()
                         ){
                           reportKey.currentState.save();
-                          sendReason(_reason);
+                          sendReason(_reason,);
                         }
 
 
@@ -273,12 +279,13 @@ Future<void> sendReason(String reason) async {
 
   Map body = {
     // name,email,phone_number,password
-    ORDER_DETAILS_ID_DELIVERY: orderDetailsId,
-    REASON:_reason
+    ORDER_ID: orderid,
+    REASON:_reason,
+    DECISION: "2",
   };
   ApiCall()
-      .execute<ReportReAssignResponse, Null>(REPORT_REASSIGN_URL, body)
-      .then((ReportReAssignResponse result) {
+      .execute<OrderAccptResponse, Null>(ORDER_ACCEPT_REJECT_URL, body)
+      .then((OrderAccptResponse result) {
     // _updateNotifier.isProgressShown = true;
     if (result.success == null) {
       if (result.message != null) ApiCall().showToast(result.message);
@@ -294,5 +301,4 @@ Future<void> sendReason(String reason) async {
                HomeScreenNew()));
   });
 }
-
 }

@@ -264,6 +264,8 @@ class Accepted {
   String accepted;
   String orderstatus;
   String shipping;
+  String rupees;
+  String ordertotal;
   String walletapplied;
   int itemcount;
   List<Deliaddressacc> deliaddressacc;
@@ -276,19 +278,23 @@ class Accepted {
         this.accepted,
         this.orderstatus,
         this.shipping,
+        this.rupees,
+        this.ordertotal,
         this.walletapplied,
         this.itemcount,
         this.deliaddressacc,
         this.acceptedorders});
 
   Accepted.fromJson(Map<String, dynamic> json) {
-    orderid = json['orderid'];
-    ordertime = json['ordertime'];
-    paymentmod = json['paymentmod'];
-    accepted = json['accepted'];
-    orderstatus = json['orderstatus'];
-    shipping = json['shipping'];
-    walletapplied = json['walletapplied'];
+    orderid = json['orderid'].toString();
+    ordertime = json['ordertime'].toString();
+    paymentmod = json['paymentmod'].toString();
+    accepted = json['accepted'].toString();
+    orderstatus = json['orderstatus'].toString();
+    shipping = json['shipping'].toString();
+    rupees = json['rupees'].toString();
+    ordertotal = json['ordertotal'].toString();
+    walletapplied = json['walletapplied'].toString();
     itemcount = json['itemcount'];
     if (json['deliaddressacc'] != null) {
       deliaddressacc = new List<Deliaddressacc>();
@@ -312,6 +318,8 @@ class Accepted {
     data['accepted'] = this.accepted;
     data['orderstatus'] = this.orderstatus;
     data['shipping'] = this.shipping;
+    data['rupees'] = this.rupees;
+    data['ordertotal'] = this.ordertotal;
     data['walletapplied'] = this.walletapplied;
     data['itemcount'] = this.itemcount;
     if (this.deliaddressacc != null) {
