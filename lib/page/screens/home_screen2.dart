@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreenNew> {
   Timer timer;
   @override
   void initState(){
-    timer = Timer.periodic(Duration(seconds: 1), (Timer t) => setState(() {}));
+    // timer = Timer.periodic(Duration(seconds: 1), (Timer t) => setState(() {}));
     super.initState();
   }
   @override
@@ -916,7 +916,7 @@ class _HomeScreenState extends State<HomeScreenNew> {
           width: 100.0,
           height: 60,
           fit: BoxFit.fitHeight,
-          placeholder: 'assets/images/homemade.jpg',
+          placeholder: 'assets/images/logo_1.png',
           image: accept.customer_image,
           // image: accept.image,
           // image: order?.packageInfo?.origination?.logo ?? '',

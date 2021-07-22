@@ -185,7 +185,7 @@ Widget getContent(){
               onTap: (){
                 _launchUrl(
                   // 'http://maps.google.com/?saddr=My+Location&daddr=${task.order.first?.packageInfo?.origination?.address}');
-                    'http://maps.google.com/?saddr=My+Location&daddr=${streetname}');
+                    'https://maps.google.com/?saddr=My+Location&daddr=${latitude}${','}${longitude}');
               },
               child: Container(
                 width: MediaQuery.of(context).size.width,

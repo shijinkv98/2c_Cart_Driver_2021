@@ -394,7 +394,7 @@ class Acceptedorders {
   String latitude;
   String longitude;
   String address;
-  // String shopimage;
+  String shopimage;
   List<Accproducts> accproducts;
   int productcountacc;
   int itemcountshopacc;
@@ -406,7 +406,7 @@ class Acceptedorders {
         this.latitude,
         this.longitude,
         this.address,
-        // this.shopimage,
+        this.shopimage,
         this.accproducts,
         this.productcountacc,
         this.itemcountshopacc});
@@ -418,7 +418,7 @@ class Acceptedorders {
     latitude = json['latitude'].toString();
     longitude = json['longitude'].toString();
     address = json['address'].toString();
-    // shopimage = json['shopimage'];
+    shopimage = json['shopimage'].toString();
     if (json['accproducts'] != null) {
       accproducts = new List<Accproducts>();
       json['accproducts'].forEach((v) {
@@ -437,7 +437,7 @@ class Acceptedorders {
     data['latitude'] = this.latitude;
     data['longitude'] = this.longitude;
     data['address'] = this.address;
-    // data['shopimage'] = this.shopimage;
+    data['shopimage'] = this.shopimage;
     if (this.accproducts != null) {
       data['accproducts'] = this.accproducts.map((v) => v.toJson()).toList();
     }

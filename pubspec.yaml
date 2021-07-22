@@ -30,6 +30,7 @@ flutter:
     - assets/icon.jpg
     - assets/picture.jpg
     - assets/images/logo_1.png
+    - assets/images/shop.png
     - assets/images/no_image.png
     - assets/images/settings.jpg
     - assets/images/balance_cod.jpg
