@@ -1,5 +1,7 @@
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:projectname33/page/custom/custom_switch.dart';
 import 'package:projectname33/page/helper/constants.dart';
 import 'package:projectname33/page/network/response/HomeScreenResponse.dart';
@@ -37,14 +39,19 @@ class _OrderDetailState extends State<OrderDetailsNew> {
   String _value = "";
   String _selectedGender = 'Door closed';
   HomeScreenResponse homeScreenResponse;
+  LatLng currentPostion;
+
+
     _OrderDetailState({this.item,this.orderid,this.firstname,this.lastname, this.itemorders,this.accproducts,this.deliaddressacc});
 
   @override
   void initState() {
     super.initState();
+    // _getUserLocation();
   }
 
   Widget appBar(BuildContext context) {
+
     return AppBar(
       flexibleSpace: Container(
       color: colorPrimary,),
@@ -130,7 +137,15 @@ class _OrderDetailState extends State<OrderDetailsNew> {
       ),
     );
   }
-
+  // Position position;
+  // void _getUserLocation() async {
+  //    position = await GeolocatorPlatform.instance
+  //       .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+  //
+  //   setState(() {
+  //     currentPostion = LatLng(position.latitude, position.longitude);
+  //   });
+  // }
   Future<void> _launchUrl(String url) async {
     if (await canLaunch(url)) {
       await launch(url);
