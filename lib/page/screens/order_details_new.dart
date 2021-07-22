@@ -4,6 +4,7 @@ import 'package:projectname33/page/custom/custom_switch.dart';
 import 'package:projectname33/page/helper/constants.dart';
 import 'package:projectname33/page/network/response/HomeScreenResponse.dart';
 import 'package:projectname33/page/screens/direction_new_customer.dart';
+import 'package:projectname33/page/screens/direction_new_google.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io' show Platform;
 
@@ -537,7 +538,9 @@ class _OrderDetailState extends State<OrderDetailsNew> {
                     ),
                     RaisedButton(
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>DirectionNew(longitude: itemorder.longitude,latitude:itemorder.latitude,shopname:itemorder.shopname,address:itemorder.address)));
+                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>
+                            // DirectionNewGoogle()));
+                            DirectionNew(longitude: itemorder.longitude,latitude:itemorder.latitude,shopname:itemorder.shopname,address:itemorder.address)));
 
                         // _launchUrl(
                         //   // 'http://maps.google.com/?saddr=My+Location&daddr=${task.order.first?.packageInfo?.location?.address}'

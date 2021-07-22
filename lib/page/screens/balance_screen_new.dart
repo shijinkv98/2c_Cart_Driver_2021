@@ -201,7 +201,7 @@ class _BalanceState extends State<BalanceScreenNew> {
                   Container(
                     margin: EdgeInsets.only(right: 20, top: 10, bottom: 10),
                     child: Text(
-                      '${'AED '}${codBalanceResponse.collected}',
+                      codBalanceResponse.collected,
                       style: TextStyle(
                           color: Colors.grey,
                           fontWeight: FontWeight.bold,
@@ -230,7 +230,7 @@ class _BalanceState extends State<BalanceScreenNew> {
                   Container(
                     margin: EdgeInsets.only(right: 20, top: 10, bottom: 10),
                     child: Text(
-                      '${'AED '}${codBalanceResponse.cashinhand}',
+                      codBalanceResponse.cashinhand,
                       style: TextStyle(
                           color: Colors.grey,
                           fontWeight: FontWeight.bold,

@@ -47,8 +47,8 @@ class _HomeScreenState extends State<HomeScreenNew> {
             return getContent();
           } else if (snapshot.hasError) {
             return
-              enableDataHome();
-             // errorScreen('Error: ${snapshot.error}');
+              // enableDataHome();
+             errorScreen('Error: ${snapshot.error}');
           }
           else {
             return  progressBar;
