@@ -35,7 +35,8 @@ class _SplashScreenState extends State<SplashScreen> {
       // use Scaffold also in order to provide material app widgets
       body: Container(
           decoration: new BoxDecoration(
-              color: Colors.white          ),
+              color: Colors.white
+          ),
           child: Center(
             child: Image(
               image: AssetImage("assets/images/logo_1.png"),

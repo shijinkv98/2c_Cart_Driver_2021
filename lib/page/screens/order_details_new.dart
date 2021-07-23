@@ -3,8 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:projectname33/page/custom/custom_switch.dart';
+import 'package:projectname33/page/helper/apiparams.dart';
+import 'package:projectname33/page/helper/apiurldata.dart';
 import 'package:projectname33/page/helper/constants.dart';
+import 'package:projectname33/page/network/ApiCall.dart';
 import 'package:projectname33/page/network/response/HomeScreenResponse.dart';
+import 'package:projectname33/page/network/response/driver_duty_response.dart';
 import 'package:projectname33/page/screens/direction_new_customer.dart';
 import 'package:projectname33/page/screens/direction_new_google.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -18,21 +22,39 @@ class OrderDetailsNew extends StatefulWidget {
   String orderid;
   String lastname;
   String firstname;
+  String duty_on;
   List<Acceptedorders> acceptedorders;
   List<Accproducts> accproducts;
   List<Deliaddressacc> deliaddressacc;
 
   @override
-  _OrderDetailState createState() => new _OrderDetailState(item:this.accept,orderid:this.orderid,firstname:this.firstname,lastname: this.lastname,itemorders: this.acceptedorders,accproducts:this.accproducts,deliaddressacc: this.deliaddressacc);
-  OrderDetailsNew({this.accept,this.orderid,this.firstname,this.lastname, this.acceptedorders,this.accproducts,this.deliaddressacc});
+  _OrderDetailState createState() => new _OrderDetailState(item:this.accept,
+      orderid:this.orderid,
+      firstname:this.firstname,
+      lastname: this.lastname,
+      itemorders: this.acceptedorders,
+      accproducts:this.accproducts,
+      deliaddressacc: this.deliaddressacc,
+      duty_on:this.duty_on
+  );
+  OrderDetailsNew({this.accept,
+    this.orderid,
+    this.firstname,
+    this.lastname,
+    this.acceptedorders,
+    this.accproducts,
+    this.deliaddressacc,
+    this.duty_on});
 }
 
 class _OrderDetailState extends State<OrderDetailsNew> {
   bool isSwitched = false;
+  bool status = false;
   Accepted item;
   String orderid;
   String firstname;
   String lastname;
+  String duty_on;
   List<Acceptedorders> itemorders;
   List<Accproducts> accproducts;
   List<Deliaddressacc> deliaddressacc;
@@ -41,13 +63,33 @@ class _OrderDetailState extends State<OrderDetailsNew> {
   HomeScreenResponse homeScreenResponse;
   LatLng currentPostion;
 
+  Position _location = Position(latitude:  0.0, longitude:0.0);
 
-    _OrderDetailState({this.item,this.orderid,this.firstname,this.lastname, this.itemorders,this.accproducts,this.deliaddressacc});
+  void _displayCurrentLocation() async {
+
+    final location = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
+    setState(() {
+      _location = location;
+
+    });
+  }
+
+    _OrderDetailState({this.item,
+      this.orderid,
+      this.firstname,
+      this.lastname,
+      this.itemorders,
+      this.accproducts,
+      this.deliaddressacc,
+      this.duty_on
+    });
 
   @override
   void initState() {
     super.initState();
     // _getUserLocation();
+    _displayCurrentLocation();
   }
 
   Widget appBar(BuildContext context) {
@@ -166,7 +208,7 @@ class _OrderDetailState extends State<OrderDetailsNew> {
   Widget getAllContent(){
     return Column(
       children: [
-        _titleName(),
+        // _titleName(),
         _tabSection(context),
 
       ],
@@ -250,7 +292,8 @@ class _OrderDetailState extends State<OrderDetailsNew> {
           ),
           Container(
             //Add this to give height
-            height: MediaQuery.of(context).size.height-220,
+            // height: MediaQuery.of(context).size.height-220,
+            height: MediaQuery.of(context).size.height-150,
             child: TabBarView(children: [
               Container(
                   child: getContent()),
@@ -555,7 +598,13 @@ class _OrderDetailState extends State<OrderDetailsNew> {
                       onPressed: () {
                         Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) =>
                             // DirectionNewGoogle()));
-                            DirectionNew(longitude: itemorder.longitude,latitude:itemorder.latitude,shopname:itemorder.shopname,address:itemorder.address)));
+                            DirectionNew(longitude: itemorder.longitude,
+                                latitude:itemorder.latitude,
+                                shopname:itemorder.shopname,
+                                address:itemorder.address,
+                                liveLat:_location.latitude,
+                                liveLong:_location.longitude
+                            )));
 
                         // _launchUrl(
                         //   // 'http://maps.google.com/?saddr=My+Location&daddr=${task.order.first?.packageInfo?.location?.address}'
@@ -607,6 +656,8 @@ class _OrderDetailState extends State<OrderDetailsNew> {
   }
 
   Widget _titleName() {
+    if(duty_on=='1')
+      status=true;
     return Container(
       margin: EdgeInsets.only(left: 20, top: 10, bottom: 15, right: 20),
       width: MediaQuery.of(context).size.width,
@@ -624,16 +675,17 @@ class _OrderDetailState extends State<OrderDetailsNew> {
           ),
           Container(
             height: 25,
-            child: CustomSwitch(
-              value: isSwitched,
+            child:
+            CustomSwitch(
+              value: status==true?true:false,
               activeColor: colorPrimaryLight,
-              activeTextColor: colorPrimary,
-              inactiveColor: colorPrimaryLight,
-              inactiveTextColor: colorPrimary,
+              activeTextColor: Colors.white,
+              inactiveColor: iconColor1,
+              inactiveTextColor: Colors.white,
               onChanged: (value) {
-                print("VALUE : $value");
+                status != false ? dutyoff():dutyupdate();
                 setState(() {
-                  isSwitched = value;
+                  status = value;
                 });
               },
             ),
@@ -641,6 +693,51 @@ class _OrderDetailState extends State<OrderDetailsNew> {
         ],
       ),
     );
+  }
+  Future<void> dutyupdate() async {
+    Map body = {
+      DUTY_ON:"1",
+      // LATITUDE:_location.latitude,
+      // LONGITUDE:_location.longitude
+
+    };
+    ApiCall()
+        .execute<DriverDutyResponse, Null>(DUTY_ON_OFF, body)
+        .then((DriverDutyResponse result) {
+      // _updateNotifier.isProgressShown = true;
+      if (result.success == null) {
+        if (result.message != null) ApiCall().showToast(result.message);
+      }
+      ApiCall().showToast(result.message != null ? result.message : "");
+      if (result.success == "1") {
+        ApiCall().showToast(result.message);
+        // NextPageReplacement(context, HomeScreenNew());
+        // setState(() {
+        //
+        // });
+      }
+    });
+  }
+  Future<void> dutyoff() async {
+    Map body = {
+      DUTY_ON:"2"
+    };
+    ApiCall()
+        .execute<DriverDutyResponse, Null>(DUTY_ON_OFF, body)
+        .then((DriverDutyResponse result) {
+      // _updateNotifier.isProgressShown = true;
+      if (result.success == null) {
+        if (result.message != null) ApiCall().showToast(result.message);
+      }
+      ApiCall().showToast(result.message != null ? result.message : "");
+      if (result.success == "1") {
+        ApiCall().showToast(result.message);
+        // NextPageReplacement(context, HomeScreenNew());
+        // setState(() {
+        //
+        // });
+      }
+    });
   }
 
   // Widget orderInfo2(Acceptedorders accept) {
@@ -957,7 +1054,9 @@ Widget getDeliveryAddress(){
                         streetname:deliaddressacc.street_name,
                         road_name:deliaddressacc.road_name,
                         state:deliaddressacc.state,
-                        house:deliaddressacc.house
+                        house:deliaddressacc.house,
+                        liveLat:_location.latitude,
+                        liveLong:_location.longitude
 
                     )));
 

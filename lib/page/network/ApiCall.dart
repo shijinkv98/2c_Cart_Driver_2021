@@ -10,6 +10,7 @@ import 'package:projectname33/page/network/response/HomeScreenResponse.dart';
 import 'package:projectname33/page/network/response/cod_balance_response.dart';
 import 'package:projectname33/page/network/response/delivery_confirm_response.dart';
 import 'package:projectname33/page/network/response/delivery_payment_response.dart';
+import 'package:projectname33/page/network/response/driver_duty_response.dart';
 import 'package:projectname33/page/network/response/driver_new_order_response.dart';
 import 'package:projectname33/page/network/response/forgotPasswordResponse.dart';
 import 'package:projectname33/page/network/response/notification_response.dart';
@@ -268,6 +269,8 @@ class ApiCall {
       return ProceedResponse.fromJson(json) as T;
     }else if (T == DeliveryPaymentResponse) {
       return DeliveryPaymentResponse.fromJson(json) as T;
+    }else if (T == DriverDutyResponse) {
+      return DriverDutyResponse.fromJson(json) as T;
     } else if (T == ReportReAssignResponse) {
       return ReportReAssignResponse.fromJson(json) as T;
      // } else if (T == Message) {

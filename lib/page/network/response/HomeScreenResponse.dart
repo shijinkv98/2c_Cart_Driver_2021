@@ -3,6 +3,7 @@ class HomeScreenResponse {
   String message;
   String firstname;
   String lastname;
+  String driver_duty;
   List<Orders> orders;
   List<Accepted> accepted;
   List<History> history;
@@ -13,6 +14,7 @@ class HomeScreenResponse {
         this.firstname,
         this.lastname,
         this.orders,
+        this.driver_duty,
         this.accepted,
         this.history});
 
@@ -21,6 +23,7 @@ class HomeScreenResponse {
     message = json['message'];
     firstname = json['firstname'];
     lastname = json['lastname'];
+    driver_duty = json['driver_duty'];
     if (json['orders'] != null) {
       orders = new List<Orders>();
       json['orders'].forEach((v) {
@@ -47,6 +50,7 @@ class HomeScreenResponse {
     data['message'] = this.message;
     data['firstname'] = this.firstname;
     data['lastname'] = this.lastname;
+    data['driver_duty'] = this.driver_duty;
     if (this.orders != null) {
       data['orders'] = this.orders.map((v) => v.toJson()).toList();
     }

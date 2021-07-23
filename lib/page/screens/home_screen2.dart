@@ -2,12 +2,16 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:projectname33/local_notications_helper.dart';
 import 'package:projectname33/page/custom/custom_switch.dart';
 import 'package:projectname33/page/helper/apiparams.dart';
 import 'package:projectname33/page/helper/apiurldata.dart';
 import 'package:projectname33/page/helper/constants.dart';
 import 'package:projectname33/page/network/ApiCall.dart';
 import 'package:projectname33/page/network/response/HomeScreenResponse.dart';
+import 'package:projectname33/page/network/response/driver_duty_response.dart';
 import 'package:projectname33/page/network/response/order_accept_response.dart';
 import 'package:projectname33/page/screens/settings.dart';
 import 'package:projectname33/page/screens/update_status_new.dart';
@@ -24,14 +28,32 @@ class HomeScreenNew extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreenNew> {
+  final notifications = FlutterLocalNotificationsPlugin();
   HomeScreenResponse homeScreenResponse;
   bool isSwitched = false;
+  bool status = false;
   String _value = "";
   Timer timer;
+  Position _location = Position(latitude: 0.0, longitude: 0.0);
+
+  void _displayCurrentLocation() async {
+
+    final location = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
+    setState(() {
+      _location = location;
+    });
+
+  }
+
   @override
   void initState(){
-    // timer = Timer.periodic(Duration(seconds: 1), (Timer t) => setState(() {}));
+
     super.initState();
+    timer = Timer.periodic(Duration(seconds: 5), (Timer t) => setState(() {}));
+    _displayCurrentLocation();
+    // showOngoingNotification(notifications,
+    //     title: 'Tite', body: 'Body');
   }
   @override
   Widget build(BuildContext context) {
@@ -85,7 +107,8 @@ class _HomeScreenState extends State<HomeScreenNew> {
             )
           )
         ): Align(child: Container(),),
-
+         homeScreenResponse.orders.length !=0? showOngoingNotification(notifications,
+          title: 'New Order', body: 'Arrived'):Container(),
         Align(
           alignment: Alignment.bottomCenter,
           child: bottomContainer(),
@@ -566,6 +589,8 @@ class _HomeScreenState extends State<HomeScreenNew> {
   }
 
   Widget _titleName() {
+    if(homeScreenResponse.driver_duty=='1')
+      status=true;
     return Container(
       margin: EdgeInsets.only(left: 15, top: 15),
       width: MediaQuery.of(context).size.width,
@@ -585,23 +610,71 @@ class _HomeScreenState extends State<HomeScreenNew> {
           Container(
             margin: EdgeInsets.only(right: 15),
             height: 25,
-            child: CustomSwitch(
-              value: isSwitched,
+            child:
+            CustomSwitch(
+              value: status==true?true:false,
               activeColor: colorPrimaryLight,
-              activeTextColor: colorPrimary,
-              inactiveColor: colorPrimaryLight,
-              inactiveTextColor: colorPrimary,
+              activeTextColor: Colors.white,
+              inactiveColor: iconColor1,
+              inactiveTextColor: Colors.white,
               onChanged: (value) {
-                print("VALUE : $value");
+                status != false ? dutyoff():dutyupdate();
                 setState(() {
-                  isSwitched = value;
+                  status = value;
                 });
+
+
               },
             ),
           ),
         ],
       ),
     );
+  }
+  Future<void> dutyupdate() async {
+    Map body = {
+      DUTY_ON:"1",
+      // LATITUDE:_location.latitude,
+      // LONGITUDE:_location.longitude
+
+    };
+    ApiCall()
+        .execute<DriverDutyResponse, Null>(DUTY_ON_OFF, body)
+        .then((DriverDutyResponse result) {
+      // _updateNotifier.isProgressShown = true;
+      if (result.success == null) {
+        if (result.message != null) ApiCall().showToast(result.message);
+      }
+      ApiCall().showToast(result.message != null ? result.message : "");
+      if (result.success == "1") {
+        ApiCall().showToast(result.message);
+        // NextPageReplacement(context, HomeScreenNew());
+        // setState(() {
+        //
+        // });
+      }
+    });
+  }
+  Future<void> dutyoff() async {
+    Map body = {
+      DUTY_ON:"2"
+    };
+    ApiCall()
+        .execute<DriverDutyResponse, Null>(DUTY_ON_OFF, body)
+        .then((DriverDutyResponse result) {
+      // _updateNotifier.isProgressShown = true;
+      if (result.success == null) {
+        if (result.message != null) ApiCall().showToast(result.message);
+      }
+      ApiCall().showToast(result.message != null ? result.message : "");
+      if (result.success == "1") {
+        ApiCall().showToast(result.message);
+        // NextPageReplacement(context, HomeScreenNew());
+        // setState(() {
+        //
+        // });
+      }
+    });
   }
 
   Widget _listOrders(Accepted accept, index) {
@@ -742,7 +815,12 @@ class _HomeScreenState extends State<HomeScreenNew> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (BuildContext context) =>
-                                              OrderDetailsNew(accept: accept,orderid: accept.orderid,firstname: homeScreenResponse.firstname,lastname: homeScreenResponse.lastname,acceptedorders: accept.acceptedorders,deliaddressacc: accept.deliaddressacc
+                                              OrderDetailsNew(accept: accept,orderid: accept.orderid,
+                                                  firstname: homeScreenResponse.firstname,
+                                                  lastname: homeScreenResponse.lastname,
+                                                  acceptedorders: accept.acceptedorders,
+                                                  deliaddressacc: accept.deliaddressacc,
+                                                  duty_on:homeScreenResponse.driver_duty
                                               )));
 
                                 },
@@ -1138,7 +1216,7 @@ class _HomeScreenState extends State<HomeScreenNew> {
                   _getOrdersList() : _noDataFound('No Orders Found')
               ),
               Container(
-                  margin: EdgeInsets.only(bottom: 20),
+                  margin: EdgeInsets.only(bottom: 55),
                   child: homeScreenResponse.history.length != 0 ?_getHistoryList():_noDataFound('No History Found')),
             ]),
           ),

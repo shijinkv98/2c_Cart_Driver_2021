@@ -11,6 +11,7 @@ import 'package:projectname33/page/helper/constants.dart';
 import 'package:projectname33/page/network/response/HomeScreenResponse.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'balance_screen_new.dart';
+void main() => runApp(DirectionNewCustomer());
 class DirectionNewCustomer extends StatefulWidget {
   List<Acceptedorders> acceptedorders;
   String longitude;
@@ -20,9 +21,11 @@ class DirectionNewCustomer extends StatefulWidget {
   String road_name;
   String state;
   String house;
+  double liveLat;
+  double liveLong;
   @override
-  _DirectionNewCustomerState createState() => new _DirectionNewCustomerState(latitude:this.latitude,longitude:this.longitude,name:this.name,streetname:this.streetname,state: this.state,road_name: this.road_name,house:this.house);
-  DirectionNewCustomer({this.longitude, this.latitude, this.name, this.streetname,this.state,this.road_name,this.house});
+  _DirectionNewCustomerState createState() => new _DirectionNewCustomerState(latitude:this.latitude,longitude:this.longitude,name:this.name,streetname:this.streetname,state: this.state,road_name: this.road_name,house:this.house,liveLat:this.liveLat,liveLong:this.liveLong);
+  DirectionNewCustomer({this.longitude, this.latitude, this.name, this.streetname,this.state,this.road_name,this.house,this.liveLong,this.liveLat});
 }
 
 Map<MarkerId, Marker> markers = {};
@@ -41,32 +44,38 @@ class _DirectionNewCustomerState extends State<DirectionNewCustomer> {
   String road_name;
   String state;
   String house;
+  double liveLat;
+  double liveLong;
+
+
+
   Completer<GoogleMapController> _controller = Completer();
   // Configure map position and zoom
   // static final CameraPosition _kGooglePlex = CameraPosition(
   //   target: LatLng(double.parse(position.latitude), double.parse(position.longitude)),
   //   zoom: 9.5,
   // );
-  LatLng currentPostion;
-  Position position;
-  Future _getUserLocation() async {
-    position = await GeolocatorPlatform.instance
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+  // LatLng currentPostion;
+  // Position position;
+  // Position _location = Position(latitude:double.parse(liveLat), longitude:);
 
-    setState(() {
-      currentPostion = LatLng(position.latitude, position.longitude);
-    });
-  }
+  // void _displayCurrentLocation() async {
+  //
+  //   final location = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+  //
+  //   setState(() {
+  //     _location = location;
+  //
+  //   });
+  // }
 
-  _DirectionNewCustomerState({this.latitude,this.longitude,this.state,this.road_name,this.name,this.streetname,this.house});
+  _DirectionNewCustomerState({this.latitude,this.longitude,this.state,this.road_name,this.name,this.streetname,this.house,this.liveLong,this.liveLat});
 
   @override
   void initState() {
-
-    _getUserLocation();
-
-
     super.initState();
+
+    // _displayCurrentLocation();
 
   }
 
@@ -78,22 +87,7 @@ class _DirectionNewCustomerState extends State<DirectionNewCustomer> {
   }
 
   Widget appBar(BuildContext context) {
-    _addMarker(
-      LatLng(position.latitude, position.longitude),
-      "origin",
-      BitmapDescriptor.defaultMarker,
-    );
 
-    // Add destination marker
-    //  _destLatitude = latitude;
-    // double _destLongitude = longitude;
-    _addMarker(
-      LatLng(double.parse(latitude), double.parse(longitude)),
-      "destination",
-      BitmapDescriptor.defaultMarkerWithHue(90),
-    );
-
-    _getPolyline();
     return AppBar(
       flexibleSpace: Container(
         color: colorPrimary,),
@@ -173,16 +167,36 @@ class _DirectionNewCustomerState extends State<DirectionNewCustomer> {
 
   @override
   Widget build(BuildContext context) {
+
     debugPrint('$APP_TAG ReturnToStoreScreen build()');
+    _addMarker(
+      LatLng(liveLat ,liveLong),
+      "origin",
+      BitmapDescriptor.defaultMarker,
+    );
+
+    // Add destination marker
+    //  _destLatitude = latitude;
+    // double _destLongitude = longitude;
+    _addMarker(
+      LatLng(double.parse(latitude), double.parse(longitude)),
+      "destination",
+      BitmapDescriptor.defaultMarkerWithHue(90),
+    );
+
+    _getPolyline();
     return Scaffold(
+
       // use Scaffold also in order to provide material app widgets
       backgroundColor: Colors.white,
       appBar: appBar(context),
-      body: getContent(),
+      body:
+      getContent(),
 
     );
   }
   Widget getContent(){
+
     return Container(
         color:Colors.white,
         child:Stack(
@@ -200,7 +214,7 @@ class _DirectionNewCustomerState extends State<DirectionNewCustomer> {
                     GoogleMap(
                       mapType: MapType.normal,
                       initialCameraPosition: CameraPosition(
-                      target: LatLng(position.latitude,position.longitude),
+                      target: LatLng(liveLat ,liveLong),
                         zoom: 9.5,
                       ),
                       myLocationEnabled: true,
@@ -263,7 +277,7 @@ class _DirectionNewCustomerState extends State<DirectionNewCustomer> {
                   child: Center(child: Text('PROCEED',style: TextStyle(color: Colors.white,fontSize: 15),)),
                 ),
               ),
-            )
+            ),
           ],
         )
 
@@ -299,7 +313,7 @@ class _DirectionNewCustomerState extends State<DirectionNewCustomer> {
 
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
       "AIzaSyAIjaTpHNWTYXsHI-aW1kNxGQVXc3_epGA",
-      PointLatLng(position.latitude, position.longitude),
+      PointLatLng(liveLat ,liveLong),
       PointLatLng(double.parse(latitude), double.parse(longitude)),
       travelMode: TravelMode.driving,
     );

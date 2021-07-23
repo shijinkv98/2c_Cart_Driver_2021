@@ -23,3 +23,4 @@ const String HOME_PAGE_URL = "home_page";
 const String RESET_PASSWORD = "otp_verification_and_change_password";
 const String NOTIFICATION = "notifications";
 const String DELIVERY_PAYMENT = "delivery_payment";
+const String DUTY_ON_OFF = "on_off";

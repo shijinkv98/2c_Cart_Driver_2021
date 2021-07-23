@@ -24,3 +24,6 @@ const String NEW_PASSWORD = "newpassword";
 const String PHONE_COUNTRY_CODE = "phonecountrycode";
 const String AMOUNT = "amount";
 const String ORDER_PROCEED_URL = "ordershipped";
+const String DUTY_ON = "on";
+const String LATITUDE = "latitude";
+const String LONGITUDE = "longitude";
